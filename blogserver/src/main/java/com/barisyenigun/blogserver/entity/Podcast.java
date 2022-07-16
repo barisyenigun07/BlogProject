@@ -25,7 +25,7 @@ public class Podcast {
     @Column(name = "content")
     private Byte[] content;
     @ManyToOne(optional = false)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "userid")
     private User user;
 
 }

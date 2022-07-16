@@ -25,7 +25,7 @@ public class Article {
     @Column(name = "content")
     private String content;
     @ManyToOne(optional = false)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "userid")
     private User user;
 
 }
