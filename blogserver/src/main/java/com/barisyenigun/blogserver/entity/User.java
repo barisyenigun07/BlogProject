@@ -19,14 +19,14 @@ public class User {
     @SequenceGenerator(name = "user_id_seq",sequenceName = "user_id_seq",allocationSize = 1)
     @Column(name = "id")
     private Long id;
-    @Column(name = "firstname")
+    @Column(name = "firstname",nullable = false)
     private String firstname;
-    @Column(name = "lastname")
+    @Column(name = "lastname",nullable = false)
     private String lastname;
     @Column(name = "email")
     private String email;
-    @Column(name = "username")
+    @Column(name = "username",nullable = false)
     private String username;
-    @Column(name = "password")
+    @Column(name = "password",nullable = false)
     private String password;
 }
