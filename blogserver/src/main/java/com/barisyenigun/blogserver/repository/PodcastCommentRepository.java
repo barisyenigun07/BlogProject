@@ -1,9 +1,9 @@
 package com.barisyenigun.blogserver.repository;
 
-import com.barisyenigun.blogserver.entity.Video;
+import com.barisyenigun.blogserver.entity.PodcastComment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface VideoRepository extends JpaRepository<Video,Long>{
+public interface PodcastCommentRepository extends JpaRepository<PodcastComment,Long>{
 }

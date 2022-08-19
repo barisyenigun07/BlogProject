@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Article extends Post{
+public class Article{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "article_id_seq")
     @SequenceGenerator(name = "article_id_seq",sequenceName = "article_id_seq",allocationSize = 1)
@@ -22,10 +22,12 @@ public class Article extends Post{
     @Column(name = "title",nullable = false)
     private String title;
     @Lob
-    @Column(name = "content",nullable = false,columnDefinition = "CLOB")
+    @Column(name = "content",nullable = false,columnDefinition = "TEXT")
     private String content;
     @ManyToOne(optional = false)
-    @JoinColumn(name = "userid")
+    @JoinColumn(name = "user_id")
     private User user;
+
+
 
 }

@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Video extends Post{
+public class Video{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "video_id_seq")
     @SequenceGenerator(name = "video_id_seq",sequenceName = "video_id_seq")
@@ -21,11 +21,11 @@ public class Video extends Post{
     private Long id;
     @Column(name = "title",nullable = false)
     private String title;
-    @Lob
-    @Column(name = "content",nullable = false,columnDefinition = "BLOB")
-    private Byte[] content;
+    @Column(name = "contentLink",nullable = false)
+    private String contentLink;
+    @Column(name = "explanation")
+    private String explanation;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
 }
