@@ -1,4 +1,4 @@
-package com.barisyenigun.blogserver.service;
+package com.barisyenigun.blogserver.service.auth;
 
 import com.barisyenigun.blogserver.entity.User;
 import com.barisyenigun.blogserver.exception.PasswordAlreadyTakenException;
@@ -6,12 +6,11 @@ import com.barisyenigun.blogserver.exception.PasswordsMismatchException;
 import com.barisyenigun.blogserver.exception.UserNotFoundException;
 import com.barisyenigun.blogserver.exception.UsernameAlreadyTakenException;
 import com.barisyenigun.blogserver.repository.UserRepository;
-import com.barisyenigun.blogserver.request.LoginRequest;
-import com.barisyenigun.blogserver.request.RegisterRequest;
-import com.barisyenigun.blogserver.response.AuthResponse;
+import com.barisyenigun.blogserver.request.auth.LoginRequest;
+import com.barisyenigun.blogserver.request.auth.RegisterRequest;
+import com.barisyenigun.blogserver.response.auth.AuthResponse;
 import com.barisyenigun.blogserver.security.JwtUserDetailsService;
 import com.barisyenigun.blogserver.util.TokenManager;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -25,18 +24,30 @@ import java.util.Optional;
 
 @Service
 @Transactional
-@AllArgsConstructor
 public class AuthService {
+
+    private final JwtUserDetailsService userDetailsService;
+
+    private final AuthenticationManager authenticationManager;
+
+    private final TokenManager tokenManager;
+
+    private final PasswordEncoder passwordEncoder;
+
+    private final UserRepository userRepository;
+
     @Autowired
-    private JwtUserDetailsService userDetailsService;
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private TokenManager tokenManager;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private UserRepository userRepository;
+    public AuthService(JwtUserDetailsService userDetailsService,
+                       AuthenticationManager authenticationManager,
+                       TokenManager tokenManager,
+                       PasswordEncoder passwordEncoder,
+                       UserRepository userRepository) {
+        this.userDetailsService = userDetailsService;
+        this.authenticationManager = authenticationManager;
+        this.tokenManager = tokenManager;
+        this.passwordEncoder = passwordEncoder;
+        this.userRepository = userRepository;
+    }
 
     public void register(RegisterRequest body){
         Optional<User> existingUserByUsername = userRepository.findByUsername(body.getUsername());
@@ -46,6 +57,9 @@ public class AuthService {
         }
         if (existingUserByPassword.isPresent()){
             throw new PasswordAlreadyTakenException();
+        }
+        if (!body.getPassword().equals(body.getPasswordAgain())){
+            throw new PasswordsMismatchException();
         }
         User user = new User();
         user.setName(body.getName());
@@ -69,5 +83,6 @@ public class AuthService {
                 .token(jwtToken)
                 .build();
     }
+
 
 }

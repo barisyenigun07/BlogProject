@@ -23,7 +23,7 @@ public class User {
     private String name;
     @Column(name = "profile_photo_link")
     private String profilePhotoLink;
-    @Column(name = "email")
+    @Column(name = "email",nullable = false)
     private String email;
     @Column(name = "username",nullable = false,unique = true)
     private String username;

@@ -1,6 +1,5 @@
-package com.barisyenigun.blogserver.request;
+package com.barisyenigun.blogserver.request.auth;
 
-import com.sun.istack.NotNull;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.ToString;
@@ -16,4 +15,6 @@ public class RegisterRequest {
     private String username;
     @NonNull
     private String password;
+    @NonNull
+    private String passwordAgain;
 }

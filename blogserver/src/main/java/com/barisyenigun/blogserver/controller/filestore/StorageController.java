@@ -1,4 +1,4 @@
-package com.barisyenigun.blogserver.controller;
+package com.barisyenigun.blogserver.controller.filestore;
 
 import com.barisyenigun.blogserver.service.filestore.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.barisyenigun.blogserver.response;
+package com.barisyenigun.blogserver.response.user;
 
 import com.barisyenigun.blogserver.entity.User;
 import lombok.*;

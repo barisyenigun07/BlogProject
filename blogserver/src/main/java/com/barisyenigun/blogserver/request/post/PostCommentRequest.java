@@ -1,4 +1,4 @@
-package com.barisyenigun.blogserver.request;
+package com.barisyenigun.blogserver.request.post;
 
 import lombok.Data;
 import lombok.ToString;

@@ -1,4 +1,4 @@
-package com.barisyenigun.blogserver.response;
+package com.barisyenigun.blogserver.response.tag;
 
 import com.barisyenigun.blogserver.entity.Tag;
 import lombok.Builder;

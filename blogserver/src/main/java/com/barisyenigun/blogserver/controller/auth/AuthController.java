@@ -1,9 +1,9 @@
-package com.barisyenigun.blogserver.controller;
+package com.barisyenigun.blogserver.controller.auth;
 
-import com.barisyenigun.blogserver.request.LoginRequest;
-import com.barisyenigun.blogserver.request.RegisterRequest;
-import com.barisyenigun.blogserver.response.AuthResponse;
-import com.barisyenigun.blogserver.service.AuthService;
+import com.barisyenigun.blogserver.request.auth.LoginRequest;
+import com.barisyenigun.blogserver.request.auth.RegisterRequest;
+import com.barisyenigun.blogserver.response.auth.AuthResponse;
+import com.barisyenigun.blogserver.service.auth.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping
 public class AuthController {
-
+    private final AuthService authService;
     @Autowired
-    private AuthService authService;
+    public AuthController(AuthService authService){
+        this.authService = authService;
+    }
 
     @PostMapping("/register")
     public void register(@RequestBody RegisterRequest body){

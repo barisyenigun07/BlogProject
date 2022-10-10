@@ -1,14 +1,11 @@
-package com.barisyenigun.blogserver.response;
+package com.barisyenigun.blogserver.response.auth;
 
 import lombok.*;
-
-import java.io.Serializable;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @Builder
-public class AuthResponse implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class AuthResponse {
     private final String token;
 }
