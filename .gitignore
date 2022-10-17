@@ -1,0 +1,2 @@
+blogserver/src/main/java/com/barisyenigun/blogserver/bucket/BucketName.java
+blogserver/src/main/java/com/barisyenigun/blogserver/config/AmazonConfig.java

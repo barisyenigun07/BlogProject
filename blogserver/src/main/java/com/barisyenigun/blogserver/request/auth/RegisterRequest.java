@@ -16,5 +16,5 @@ public class RegisterRequest {
     @NonNull
     private String password;
     @NonNull
-    private String passwordAgain;
+    private String passwordRepeat;
 }

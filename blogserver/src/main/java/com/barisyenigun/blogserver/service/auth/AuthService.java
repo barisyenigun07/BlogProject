@@ -12,9 +12,6 @@ import com.barisyenigun.blogserver.response.auth.AuthResponse;
 import com.barisyenigun.blogserver.security.JwtUserDetailsService;
 import com.barisyenigun.blogserver.util.TokenManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,8 +25,6 @@ public class AuthService {
 
     private final JwtUserDetailsService userDetailsService;
 
-    private final AuthenticationManager authenticationManager;
-
     private final TokenManager tokenManager;
 
     private final PasswordEncoder passwordEncoder;
@@ -38,12 +33,10 @@ public class AuthService {
 
     @Autowired
     public AuthService(JwtUserDetailsService userDetailsService,
-                       AuthenticationManager authenticationManager,
                        TokenManager tokenManager,
                        PasswordEncoder passwordEncoder,
                        UserRepository userRepository) {
         this.userDetailsService = userDetailsService;
-        this.authenticationManager = authenticationManager;
         this.tokenManager = tokenManager;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
@@ -58,7 +51,7 @@ public class AuthService {
         if (existingUserByPassword.isPresent()){
             throw new PasswordAlreadyTakenException();
         }
-        if (!body.getPassword().equals(body.getPasswordAgain())){
+        if (!body.getPassword().equals(body.getPasswordRepeat())){
             throw new PasswordsMismatchException();
         }
         User user = new User();
@@ -70,13 +63,14 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest body){
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(body.getUsername(),body.getPassword()));
-        }
-        catch (UserNotFoundException | BadCredentialsException | PasswordsMismatchException e){
-            e.printStackTrace();
+        Optional<User> optionalUser = userRepository.findByUsername(body.getUsername());
+        if (!optionalUser.isPresent()) {
+            throw new UserNotFoundException();
         }
 
+        if (!passwordEncoder.matches(body.getPassword(), optionalUser.get().getPassword())) {
+            throw new PasswordsMismatchException();
+        }
         final UserDetails userDetails = userDetailsService.loadUserByUsername(body.getUsername());
         final String jwtToken = tokenManager.generateJwtToken(userDetails);
         return AuthResponse.builder()

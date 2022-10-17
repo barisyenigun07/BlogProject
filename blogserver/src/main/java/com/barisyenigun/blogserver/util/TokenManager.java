@@ -22,7 +22,7 @@ public class TokenManager{
         return Jwts.builder().setClaims(claims).setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 864000000))
-                .signWith(SignatureAlgorithm.HS512,jwtSecret).compact();
+                .signWith(SignatureAlgorithm.HS256,jwtSecret).compact();
     }
 
     public Boolean validateToken(String token, UserDetails userDetails){

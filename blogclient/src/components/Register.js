@@ -8,7 +8,8 @@ class Register extends Component {
     name: null,
     email: null,
     username: null,
-    password: null
+    password: null,
+    passwordRepeat: null
   }
   
   handleOnChange = (event) => {
@@ -20,12 +21,13 @@ class Register extends Component {
   };
   onClickRegister = (event) => {
     event.preventDefault();
-    const {name, email, username, password} = this.state;
+    const {name, email, username, password, passwordRepeat} = this.state;
     const body = {
         name: name,
         email: email,
         username: username,
-        password: password
+        password: password,
+        passwordRepeat: passwordRepeat
     };
     axios.post("/register",body)
     .catch(err => alert(err))
@@ -48,9 +50,10 @@ class Register extends Component {
           </div>
           <div>
             <TextField type='password' name='passwordRepeat' label='Password Repeat' variant='outlined' onChange={this.handleOnChange}/> <br/> <br/>
-          </div>
           <div>
             <Button type='button' name='button' variant='outlined' onClick={this.onClickRegister}>Register</Button>
+          </div>
+            
           </div>
         </form>
       </div>

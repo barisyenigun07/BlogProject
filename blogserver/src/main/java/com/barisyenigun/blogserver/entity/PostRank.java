@@ -8,7 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "post_like")
+@Table(name = "post_rank")
 @Getter
 @Setter
 @NoArgsConstructor
