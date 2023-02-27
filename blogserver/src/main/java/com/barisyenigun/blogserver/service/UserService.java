@@ -3,18 +3,19 @@ package com.barisyenigun.blogserver.service;
 import com.barisyenigun.blogserver.bucket.BucketName;
 import com.barisyenigun.blogserver.entity.User;
 import com.barisyenigun.blogserver.exception.PasswordsMismatchException;
-import com.barisyenigun.blogserver.exception.UserNotFoundException;
+import com.barisyenigun.blogserver.exception.ResourceNotFoundException;
+import com.barisyenigun.blogserver.exception.ResourceType;
 import com.barisyenigun.blogserver.repository.UserRepository;
-import com.barisyenigun.blogserver.request.user.ChangePasswordRequest;
-import com.barisyenigun.blogserver.request.user.UpdateUserRequest;
-import com.barisyenigun.blogserver.response.user.UserResponse;
-import com.barisyenigun.blogserver.service.filestore.StorageService;
+import com.barisyenigun.blogserver.request.ChangePasswordRequest;
+import com.barisyenigun.blogserver.request.UpdateUserRequest;
+import com.barisyenigun.blogserver.response.UserResponse;
 import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 
 
 import java.io.IOException;
@@ -41,7 +42,7 @@ public class UserService {
     }
 
     public UserResponse getUser(Long id){
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException());
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
         return UserResponse.fromEntity(user);
     }
 
@@ -65,7 +66,7 @@ public class UserService {
             }
         }
         else{
-            throw new UserNotFoundException();
+            throw new ResourceNotFoundException(ResourceType.USER);
         }
     }
     public void updateUser(UpdateUserRequest body){
@@ -73,7 +74,7 @@ public class UserService {
     }
 
     public void changePassword(ChangePasswordRequest body){
-        User user = getAuthenticatedUser().orElseThrow(() -> new UserNotFoundException());
+        User user = getAuthenticatedUser().orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
         if (body.getNewPassword().equals(body.getNewPasswordRepeat())){
             user.setPassword(passwordEncoder.encode(body.getNewPassword()));
         }
@@ -84,7 +85,7 @@ public class UserService {
     }
 
     public byte[] downloadProfilePhoto(Long id){
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException());
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
         String path = String.format("%s/%s",BucketName.STORAGE_BUCKET.getBucketName(),user.getId());
         
         return null;
@@ -101,6 +102,7 @@ public class UserService {
         if (!Arrays.asList(ContentType.IMAGE_JPEG.getMimeType(),ContentType.IMAGE_PNG.getMimeType()).contains(file.getContentType())){
             throw new IllegalStateException("Cannot upload file!");
         }
+
     }
 
 

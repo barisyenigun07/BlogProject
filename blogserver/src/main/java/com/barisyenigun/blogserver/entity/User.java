@@ -23,10 +23,12 @@ public class User {
     private String name;
     @Column(name = "profile_photo_link")
     private String profilePhotoLink;
+    @Column(name = "caption_photo_link")
+    private String captionPhotoLink;
     @Column(name = "email",nullable = false)
     private String email;
-    @Column(name = "username",nullable = false,unique = true)
+    @Column(name = "username",nullable = false, unique = true)
     private String username;
-    @Column(name = "password",nullable = false,unique = true)
+    @Column(name = "password",nullable = false, unique = true)
     private String password;
 }

@@ -1,9 +1,14 @@
+import { Button } from '@mui/material';
 import React, { Component } from 'react'
 
 class VideoPost extends Component {
   render() {
     return (
-      <div>VideoPost</div>
+      <div>
+        <Button variant='contained'>
+          <input type="file"/>
+        </Button>
+      </div>
     )
   }
 }

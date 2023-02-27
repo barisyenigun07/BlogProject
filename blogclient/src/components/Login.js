@@ -28,10 +28,9 @@ class Login extends Component {
     axios.post("/login",body).then(res => {
       const token = res.data.token;
       localStorage.setItem("token",token);
-      setAuthToken(token);
-      window.location.href = '/'
+      //setAuthToken(token);
     })
-    .catch(err => console.log(err));
+    .catch(err => alert(err));
   }
 
 

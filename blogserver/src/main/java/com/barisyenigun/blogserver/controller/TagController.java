@@ -1,8 +1,7 @@
 package com.barisyenigun.blogserver.controller;
 
-import com.barisyenigun.blogserver.entity.Tag;
-import com.barisyenigun.blogserver.request.tag.TagRequest;
-import com.barisyenigun.blogserver.response.tag.TagResponse;
+import com.barisyenigun.blogserver.request.TagRequest;
+import com.barisyenigun.blogserver.response.TagResponse;
 import com.barisyenigun.blogserver.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +29,7 @@ public class TagController {
     }
 
     @GetMapping
-    public List<Tag> getTags(){
+    public List<TagResponse> getTags(){
         return tagService.getTags();
     }
 }

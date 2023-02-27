@@ -1,10 +1,15 @@
-import './App.css';
-import Register from './components/Register';
+
+import ArticlePost from './components/ArticlePost';
+import Navbar from './components/Navbar';
+import VideoPost from './components/VideoPost';
+
 function App() {
   return (
-    <div className="App">
-      <Register/>
-    </div>
+    <>
+      <Navbar/>
+      <VideoPost/>
+      <ArticlePost/>
+    </>
   );
 }
 

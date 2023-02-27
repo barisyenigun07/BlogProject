@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import static javax.persistence.CascadeType.REMOVE;
 
 @Entity
-@Table(name = "posts")
+@Table(name = "post")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -26,15 +26,17 @@ public class Post {
     private String title;
     @Column(name = "description",nullable = false)
     private String description;
+    @Column(name = "caption_photo_link")
+    private String captionPhotoLink;
     @Lob
-    @Column(name = "content",nullable = false,columnDefinition = "TEXT")
+    @Column(name = "content",nullable = false, columnDefinition = "TEXT")
     private String content;
+    @Column(name = "post_type",nullable = false)
+    private String postType;
     @Column(name = "published_time")
-    private LocalDate publishedTime;
+    private LocalDate publishedDate = LocalDate.now();
     @Column(name = "modified_time")
-    private LocalDate modifiedTime;
-    @Column(name = "post_type")
-    private String type;
+    private LocalDate modifiedDate;
     @ManyToOne
     @JoinColumn(name = "tag_id")
     private Tag tag;

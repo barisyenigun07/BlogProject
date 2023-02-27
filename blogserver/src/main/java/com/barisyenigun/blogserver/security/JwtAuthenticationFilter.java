@@ -1,6 +1,5 @@
 package com.barisyenigun.blogserver.security;
 
-import com.barisyenigun.blogserver.util.TokenManager;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

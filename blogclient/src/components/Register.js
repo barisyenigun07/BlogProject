@@ -51,7 +51,7 @@ class Register extends Component {
           <div>
             <TextField type='password' name='passwordRepeat' label='Password Repeat' variant='outlined' onChange={this.handleOnChange}/> <br/> <br/>
           <div>
-            <Button type='button' name='button' variant='outlined' onClick={this.onClickRegister}>Register</Button>
+            <Button type='button' name='button' variant='contained' onClick={this.onClickRegister}>Register</Button>
           </div>
             
           </div>

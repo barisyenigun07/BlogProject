@@ -1,6 +1,8 @@
 package com.barisyenigun.blogserver.controller;
 
-import com.barisyenigun.blogserver.request.post.PostRequest;
+import com.barisyenigun.blogserver.request.ArticleRequest;
+import com.barisyenigun.blogserver.request.PodcastRequest;
+import com.barisyenigun.blogserver.request.VideoRequest;
 import com.barisyenigun.blogserver.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +21,17 @@ public class PostController {
     }
 
     @PostMapping("/article")
-    public void postArticle(@RequestBody PostRequest body){
-        postService.postArticle(body);
+    public void createArticle(@RequestBody ArticleRequest body){
+        postService.createArticle(body);
+    }
+
+    @PostMapping( "/video")
+    public void createVideo(@RequestBody VideoRequest body){
+        postService.createVideo(body);
+    }
+
+    @PostMapping("/podcast")
+    public void createPodcast(@RequestBody PodcastRequest body){
+        postService.createPodcast(body);
     }
 }

@@ -1,7 +1,6 @@
 package com.barisyenigun.blogserver.security;
 
 
-import com.barisyenigun.blogserver.util.JwtAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -51,12 +50,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
-                .and()
-                .rememberMe().userDetailsService(userDetailsService)
-                .and()
-                .formLogin()
-                .defaultSuccessUrl("/")
-                .loginPage("/login")
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
