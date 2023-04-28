@@ -15,8 +15,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class Rank {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "post_like_id_seq")
-    @SequenceGenerator(name = "post_like_id_seq",sequenceName = "post_like_id_seq",allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "post_rank_id_seq")
+    @SequenceGenerator(name = "post_rank_id_seq",sequenceName = "post_rank_id_seq",allocationSize = 1)
     @Column(name = "id")
     private Long id;
     @Column(name = "rank_level")

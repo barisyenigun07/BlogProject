@@ -20,7 +20,7 @@ public class TagController {
 
     @PostMapping
     public void postTag(@RequestBody TagRequest body){
-        tagService.postTag(body);
+        tagService.createTag(body);
     }
 
     @GetMapping("/{tagId}")

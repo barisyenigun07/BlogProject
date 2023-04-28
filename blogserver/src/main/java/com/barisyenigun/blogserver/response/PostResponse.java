@@ -28,8 +28,8 @@ public class PostResponse {
                 .description(post.getDescription())
                 .content(post.getContent())
                 .postType(post.getPostType())
-                .publishedDate(post.getPublishedTime())
-                .modifiedDate(post.getModifiedTime())
+                .publishedDate(post.getPublishedDate())
+                .modifiedDate(post.getModifiedDate())
                 .tagResponse(TagResponse.fromEntity(post.getTag()))
                 .userResponse(UserResponse.fromEntity(post.getUser()))
                 .build();

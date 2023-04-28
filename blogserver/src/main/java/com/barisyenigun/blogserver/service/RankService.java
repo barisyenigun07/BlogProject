@@ -25,7 +25,7 @@ public class RankService {
         this.userService = userService;
     }
 
-    public void createRank(Long postId, RankRequest body){
+    public void createRank(RankRequest body, Long postId){
         User user = userService.getAuthenticatedUser().orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
         Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException(ResourceType.POST));
         Rank rank = new Rank();
@@ -33,6 +33,11 @@ public class RankService {
         rank.setPost(post);
         post.setUser(user);
         rankRepository.save(rank);
+    }
+
+    public double getAverageRankOfAPost(Long postId){
+        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException(ResourceType.POST));
+        return rankRepository.findAverageRank(post);
     }
 
     public void deleteRank(Long id){
@@ -44,7 +49,7 @@ public class RankService {
         rankRepository.deleteById(id);
     }
 
-    public void updateRank(RankRequest body ,Long id){
+    public void updateRank(RankRequest body, Long id){
         User user = userService.getAuthenticatedUser().orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
         Rank rank = rankRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.RANK));
         if (!rank.getUser().equals(user)){

@@ -3,12 +3,12 @@ package com.barisyenigun.blogserver.controller;
 import com.barisyenigun.blogserver.request.ArticleRequest;
 import com.barisyenigun.blogserver.request.PodcastRequest;
 import com.barisyenigun.blogserver.request.VideoRequest;
+import com.barisyenigun.blogserver.response.PostResponse;
 import com.barisyenigun.blogserver.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/post")
@@ -21,17 +21,47 @@ public class PostController {
     }
 
     @PostMapping("/article")
-    public void createArticle(@RequestBody ArticleRequest body){
+    public void createArticle(@ModelAttribute ArticleRequest body){
         postService.createArticle(body);
     }
 
+    /*@PostMapping("/article/image/upload")
+    public void uploadArticleImage(@RequestParam("file") MultipartFile file){
+        postService.uploadArticleImage(file);
+    }*/
+
     @PostMapping( "/video")
-    public void createVideo(@RequestBody VideoRequest body){
+    public void createVideo(@ModelAttribute VideoRequest body){
         postService.createVideo(body);
     }
 
     @PostMapping("/podcast")
-    public void createPodcast(@RequestBody PodcastRequest body){
+    public void createPodcast(@ModelAttribute PodcastRequest body){
         postService.createPodcast(body);
+    }
+
+    @GetMapping("/{id}")
+    public PostResponse getPost(@PathVariable Long id){
+        return postService.getPost(id);
+    }
+
+    @GetMapping
+    public List<PostResponse> getPosts(){
+        return postService.getPosts();
+    }
+
+    @GetMapping("/{id}/content/download")
+    public byte[] getFileContent(@PathVariable Long id){
+        return postService.getFileContent(id);
+    }
+
+    @GetMapping("/{id}/caption_photo/download")
+    public byte[] getCaptionPhoto(@PathVariable Long id){
+        return postService.getCaptionPhoto(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deletePost(@PathVariable Long id){
+        postService.deletePost(id);
     }
 }

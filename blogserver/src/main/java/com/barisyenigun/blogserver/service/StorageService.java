@@ -44,6 +44,8 @@ public class StorageService {
             throw new IllegalStateException("Failed to download the file",e);
         }
     }
-
+    public void delete(String bucketName, String key){
+        s3.deleteObject(bucketName, key);
+    }
 
 }

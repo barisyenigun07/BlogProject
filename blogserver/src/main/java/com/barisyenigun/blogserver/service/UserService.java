@@ -1,6 +1,5 @@
 package com.barisyenigun.blogserver.service;
 
-import com.barisyenigun.blogserver.bucket.BucketName;
 import com.barisyenigun.blogserver.entity.User;
 import com.barisyenigun.blogserver.exception.PasswordsMismatchException;
 import com.barisyenigun.blogserver.exception.ResourceNotFoundException;
@@ -9,27 +8,25 @@ import com.barisyenigun.blogserver.repository.UserRepository;
 import com.barisyenigun.blogserver.request.ChangePasswordRequest;
 import com.barisyenigun.blogserver.request.UpdateUserRequest;
 import com.barisyenigun.blogserver.response.UserResponse;
-import org.apache.http.entity.ContentType;
+import com.barisyenigun.blogserver.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 
 
-import java.io.IOException;
 import java.util.*;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    private final StorageService storageService;
+    private final FileUtil fileUtil;
     private final PasswordEncoder passwordEncoder;
     @Autowired
-    public UserService(UserRepository userRepository, StorageService storageService, PasswordEncoder passwordEncoder){
+    public UserService(UserRepository userRepository, FileUtil fileUtil, PasswordEncoder passwordEncoder){
         this.userRepository = userRepository;
-        this.storageService = storageService;
+        this.fileUtil = fileUtil;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -45,32 +42,19 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
         return UserResponse.fromEntity(user);
     }
-
-    public void uploadProfilePhoto(MultipartFile file){
-        Optional<User> optionalUser = getAuthenticatedUser();
-        if (optionalUser.isPresent()){
-            User user = optionalUser.get();
-            if (!file.isEmpty()){
-                isFile(file);
-                Map<String, String> metadata = extractMetadata(file);
-                String path = String.format("%s/%s",BucketName.STORAGE_BUCKET.getBucketName(),user.getId());
-                String filename = String.format("%s-%s",file.getName(),UUID.randomUUID());
-                try {
-                    storageService.upload(path,filename,Optional.of(metadata),file.getInputStream());
-                    user.setProfilePhotoLink(filename);
-                    userRepository.save(user);
-                }
-                catch (IOException e){
-                    throw new IllegalStateException(e);
-                }
-            }
-        }
-        else{
-            throw new ResourceNotFoundException(ResourceType.USER);
-        }
-    }
     public void updateUser(UpdateUserRequest body){
+        User user = getAuthenticatedUser().orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
+        user.setName(body.getName());
+        user.setUsername(body.getUsername());
+        user.setEmail(body.getEmail());
 
+        String captionPhotoLink = fileUtil.uploadFile(body.getCaptionPhoto(), "image/", "user_caption_photos");
+        user.setCaptionPhotoLink(captionPhotoLink);
+
+        String profilePhotoLink = fileUtil.uploadFile(body.getProfilePhoto(), "image/", "user_profile_photos");
+        user.setProfilePhotoLink(profilePhotoLink);
+
+        userRepository.save(user);
     }
 
     public void changePassword(ChangePasswordRequest body){
@@ -84,26 +68,14 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public byte[] downloadProfilePhoto(Long id){
+    public byte[] getProfilePhoto(Long id){
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
+        return fileUtil.downloadFile("user_profile_photos", user.getProfilePhotoLink());
+    }
+
+    /*public byte[] downloadProfilePhoto(Long id){
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
         String path = String.format("%s/%s",BucketName.STORAGE_BUCKET.getBucketName(),user.getId());
-        
-        return null;
-    }
-
-    private Map<String, String> extractMetadata(MultipartFile file) {
-        Map<String, String> metadata = new HashMap<>();
-        metadata.put("Content-Type", file.getContentType());
-        metadata.put("Content-Length",String.valueOf(file.getSize()));
-        return metadata;
-    }
-
-    private void isFile(MultipartFile file) {
-        if (!Arrays.asList(ContentType.IMAGE_JPEG.getMimeType(),ContentType.IMAGE_PNG.getMimeType()).contains(file.getContentType())){
-            throw new IllegalStateException("Cannot upload file!");
-        }
-
-    }
-
-
+        return storageService.download(path, user.getProfilePhotoLink());
+    }*/
 }

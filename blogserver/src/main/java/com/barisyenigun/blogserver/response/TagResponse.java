@@ -6,21 +6,16 @@ import lombok.Data;
 import lombok.ToString;
 
 @Data
-@ToString
 @Builder
+@ToString
 public class TagResponse {
     private Long id;
     private String tagName;
 
     public static TagResponse fromEntity(Tag tag){
-        if (tag == null){
-            return null;
-        }
-        else {
-            return TagResponse.builder()
+        return TagResponse.builder()
                     .id(tag.getId())
                     .tagName(tag.getTagName())
                     .build();
-        }
     }
 }

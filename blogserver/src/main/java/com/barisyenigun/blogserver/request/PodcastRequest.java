@@ -10,6 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 @ToString
 @EqualsAndHashCode(callSuper = true)
 public class PodcastRequest extends PostRequest {
-    private MultipartFile file;
+    private MultipartFile content;
     private PostType postType = PostType.PODCAST;
 }

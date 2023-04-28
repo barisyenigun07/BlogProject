@@ -21,7 +21,7 @@ public class TagService {
         this.tagRepository = tagRepository;
     }
 
-    public void postTag(TagRequest body){
+    public void createTag(TagRequest body){
         Tag tag = new Tag();
         tag.setTagName(body.getTagName());
         tagRepository.save(tag);

@@ -19,13 +19,13 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private TokenManager tokenManager;
+    private JwtUtil jwtUtil;
 
     private JwtUserDetailsService userDetailsService;
 
     @Autowired
-    public JwtAuthenticationFilter(TokenManager tokenManager, JwtUserDetailsService userDetailsService){
-        this.tokenManager = tokenManager;
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, JwtUserDetailsService userDetailsService){
+        this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
     }
 
@@ -34,7 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String username = null;
         String token = getJwtFromRequest(request);
         try {
-            username = tokenManager.getUsernameFromToken(token);
+            username = jwtUtil.getUsernameFromToken(token);
         }catch (IllegalArgumentException e){
             System.out.println("The process of getting JWT token is failed!");
         }catch (ExpiredJwtException e){
@@ -43,7 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (null != username && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            if (tokenManager.validateToken(token,userDetails)){
+            if (jwtUtil.validateToken(token,userDetails)){
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails,null,null);
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);

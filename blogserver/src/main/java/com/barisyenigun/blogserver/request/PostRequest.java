@@ -4,6 +4,7 @@ import com.barisyenigun.blogserver.entity.PostType;
 import com.barisyenigun.blogserver.entity.Tag;
 import lombok.Data;
 import lombok.ToString;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 public class PostRequest {
     private String title;
     private String description;
+    private MultipartFile captionPhoto;
     private Tag tag;
     private PostType type;
     private LocalDate updatedDate = LocalDate.now();

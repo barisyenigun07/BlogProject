@@ -7,7 +7,7 @@ import com.barisyenigun.blogserver.request.LoginRequest;
 import com.barisyenigun.blogserver.request.RegisterRequest;
 import com.barisyenigun.blogserver.response.AuthResponse;
 import com.barisyenigun.blogserver.security.JwtUserDetailsService;
-import com.barisyenigun.blogserver.security.TokenManager;
+import com.barisyenigun.blogserver.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,20 +21,17 @@ import java.util.Optional;
 public class AuthService {
 
     private final JwtUserDetailsService userDetailsService;
-
-    private final TokenManager tokenManager;
-
+    private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
-
     private final UserRepository userRepository;
 
     @Autowired
     public AuthService(JwtUserDetailsService userDetailsService,
-                       TokenManager tokenManager,
+                       JwtUtil jwtUtil,
                        PasswordEncoder passwordEncoder,
                        UserRepository userRepository) {
         this.userDetailsService = userDetailsService;
-        this.tokenManager = tokenManager;
+        this.jwtUtil = jwtUtil;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
     }
@@ -64,7 +61,7 @@ public class AuthService {
             throw new PasswordsMismatchException();
         }
         final UserDetails userDetails = userDetailsService.loadUserByUsername(body.getUsername());
-        final String jwtToken = tokenManager.generateJwtToken(userDetails);
+        final String jwtToken = jwtUtil.generateJwtToken(userDetails);
         return AuthResponse.builder()
                 .token(jwtToken)
                 .build();
