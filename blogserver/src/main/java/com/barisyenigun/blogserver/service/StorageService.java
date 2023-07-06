@@ -4,6 +4,8 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
+import com.barisyenigun.blogserver.exception.FileDownloadException;
+import com.barisyenigun.blogserver.exception.FileUploadException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +32,7 @@ public class StorageService {
             s3.putObject(path,fileName,inputStream,objectMetadata);
         }
         catch (AmazonServiceException e){
-            throw new IllegalStateException("Failed to upload file",e);
+            throw new FileUploadException();
         }
     }
 
@@ -41,7 +43,7 @@ public class StorageService {
             return IOUtils.toByteArray(objectContent);
         }
         catch (AmazonServiceException | IOException e){
-            throw new IllegalStateException("Failed to download the file",e);
+            throw new FileDownloadException();
         }
     }
     public void delete(String bucketName, String key){

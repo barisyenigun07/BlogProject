@@ -50,14 +50,14 @@ public class PostController {
         return postService.getPosts();
     }
 
-    @GetMapping("/{id}/content/download")
-    public byte[] getFileContent(@PathVariable Long id){
-        return postService.getFileContent(id);
-    }
-
     @GetMapping("/{id}/caption_photo/download")
     public byte[] getCaptionPhoto(@PathVariable Long id){
         return postService.getCaptionPhoto(id);
+    }
+
+    @GetMapping("/{id}/content/download")
+    public byte[] getFileContent(@PathVariable Long id){
+        return postService.getFileContent(id);
     }
 
     @DeleteMapping("/{id}")

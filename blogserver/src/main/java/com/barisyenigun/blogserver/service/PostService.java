@@ -37,7 +37,7 @@ public class PostService {
         post.setTitle(body.getTitle());
         post.setDescription(body.getDescription());
 
-        String captionPhotoUrl = fileUtil.uploadFile(body.getCaptionPhoto(), "image/", "caption_photos");
+        String captionPhotoUrl = fileUtil.uploadFile(body.getCaptionPhoto(), "image/", "post_caption_photos");
         post.setCaptionPhotoLink(captionPhotoUrl);
 
         post.setContent(body.getContent());
@@ -67,7 +67,7 @@ public class PostService {
         post.setTitle(body.getTitle());
         post.setDescription(body.getDescription());
 
-        String captionPhotoUrl = fileUtil.uploadFile(body.getCaptionPhoto(), "image/", "caption_photos");
+        String captionPhotoUrl = fileUtil.uploadFile(body.getCaptionPhoto(), "image/", "post_caption_photos");
         post.setCaptionPhotoLink(captionPhotoUrl);
 
         String contentUrl = fileUtil.uploadFile(body.getContent(), "video/", "videos");
@@ -104,14 +104,14 @@ public class PostService {
         return PostResponse.fromEntity(post);
     }
 
-    public byte[] getFileContent(Long id){
-        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.POST));
-        return fileUtil.downloadFile(post.getPostType().toLowerCase() + "s", post.getContent());
-    }
-
     public byte[] getCaptionPhoto(Long id){
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.POST));
         return fileUtil.downloadFile("post_caption_photos", post.getCaptionPhotoLink());
+    }
+
+    public byte[] getFileContent(Long id){
+        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.POST));
+        return fileUtil.downloadFile(post.getPostType().toLowerCase() + "s", post.getContent());
     }
 
     public List<PostResponse> getPosts(){

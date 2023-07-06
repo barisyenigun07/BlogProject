@@ -47,9 +47,6 @@ public class FileUtil {
     }
 
     public String uploadFile(MultipartFile file, String prefix, String destination){
-        if (file.isEmpty()){
-            throw new FileUploadException();
-        }
         isProperType(file, prefix);
         Map<String, String> metadata = extractMetadata(file);
         String path = String.format("%s/%s", BucketName.STORAGE_BUCKET.getBucketName(), destination);

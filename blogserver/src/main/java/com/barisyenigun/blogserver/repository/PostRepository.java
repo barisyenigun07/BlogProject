@@ -3,15 +3,18 @@ package com.barisyenigun.blogserver.repository;
 import com.barisyenigun.blogserver.entity.Post;
 
 
+import com.barisyenigun.blogserver.entity.PostType;
 import com.barisyenigun.blogserver.entity.Tag;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.barisyenigun.blogserver.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post,Long> {
-    Page<Post> findAllByTitle(String title, Pageable pageable);
-    Page<Post> findAllByTag(Tag tag, Pageable pageable);
+    List<Post> findAllByTitle(String title);
+    List<Post> findAllByPostType(PostType postType);
+
+
 }

@@ -1,17 +1,16 @@
 package com.barisyenigun.blogserver.service;
 
 import com.barisyenigun.blogserver.entity.User;
-import com.barisyenigun.blogserver.exception.PasswordsMismatchException;
 import com.barisyenigun.blogserver.exception.ResourceNotFoundException;
 import com.barisyenigun.blogserver.exception.ResourceType;
 import com.barisyenigun.blogserver.repository.UserRepository;
-import com.barisyenigun.blogserver.request.ChangePasswordRequest;
 import com.barisyenigun.blogserver.request.UpdateUserRequest;
 import com.barisyenigun.blogserver.response.UserResponse;
 import com.barisyenigun.blogserver.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
@@ -22,20 +21,24 @@ import java.util.*;
 public class UserService {
     private final UserRepository userRepository;
     private final FileUtil fileUtil;
-    private final PasswordEncoder passwordEncoder;
     @Autowired
-    public UserService(UserRepository userRepository, FileUtil fileUtil, PasswordEncoder passwordEncoder){
+    public UserService(UserRepository userRepository, FileUtil fileUtil){
         this.userRepository = userRepository;
         this.fileUtil = fileUtil;
-        this.passwordEncoder = passwordEncoder;
     }
 
     public Optional<User> getAuthenticatedUser(){
-        String principal = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal.equals("anonymousUser")){
-            return Optional.empty();
+        String username = "";
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            username = authentication.getName();
         }
-        return userRepository.findById(Long.parseLong(principal));
+        return userRepository.findByUsername(username);
+    }
+
+    public Long getAuthenticatedUserId(){
+        User user = getAuthenticatedUser().orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
+        return user.getId();
     }
 
     public UserResponse getUser(Long id){
@@ -57,20 +60,14 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void changePassword(ChangePasswordRequest body){
-        User user = getAuthenticatedUser().orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
-        if (body.getNewPassword().equals(body.getNewPasswordRepeat())){
-            user.setPassword(passwordEncoder.encode(body.getNewPassword()));
-        }
-        else{
-            throw new PasswordsMismatchException();
-        }
-        userRepository.save(user);
-    }
-
     public byte[] getProfilePhoto(Long id){
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
         return fileUtil.downloadFile("user_profile_photos", user.getProfilePhotoLink());
+    }
+
+    public byte[] getCaptionPhoto(Long id){
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
+        return fileUtil.downloadFile("user_caption_photos", user.getProfilePhotoLink());
     }
 
     /*public byte[] downloadProfilePhoto(Long id){

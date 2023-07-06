@@ -3,6 +3,7 @@ package com.barisyenigun.blogserver.service;
 import com.barisyenigun.blogserver.entity.User;
 import com.barisyenigun.blogserver.exception.*;
 import com.barisyenigun.blogserver.repository.UserRepository;
+import com.barisyenigun.blogserver.request.ChangePasswordRequest;
 import com.barisyenigun.blogserver.request.LoginRequest;
 import com.barisyenigun.blogserver.request.RegisterRequest;
 import com.barisyenigun.blogserver.response.AuthResponse;
@@ -38,8 +39,12 @@ public class AuthService {
 
     public void register(RegisterRequest body){
         Optional<User> existingUserByUsername = userRepository.findByUsername(body.getUsername());
+        Optional<User> existingUserByEmail = userRepository.findByEmail(body.getEmail());
         if (existingUserByUsername.isPresent()){
-            throw new UsernameAlreadyTakenException();
+            throw new AlreadyTakenException(AlreadyTakenType.USERNAME);
+        }
+        if (existingUserByEmail.isPresent()) {
+            throw new AlreadyTakenException(AlreadyTakenType.EMAIL);
         }
         if (!body.getPassword().equals(body.getPasswordRepeat())){
             throw new PasswordsMismatchException();
@@ -65,5 +70,13 @@ public class AuthService {
         return AuthResponse.builder()
                 .token(jwtToken)
                 .build();
+    }
+
+    public void changePassword(Long userId, ChangePasswordRequest body){
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
+        if (body.getNewPassword().equals(body.getNewPasswordRepeat())){
+            user.setPassword(passwordEncoder.encode(body.getNewPassword()));
+        }
+        userRepository.save(user);
     }
 }

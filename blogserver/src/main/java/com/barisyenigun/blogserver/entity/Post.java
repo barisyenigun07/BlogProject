@@ -5,10 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 
-import static javax.persistence.CascadeType.REMOVE;
+import static jakarta.persistence.CascadeType.REMOVE;
 
 @Entity
 @Table(name = "post")
