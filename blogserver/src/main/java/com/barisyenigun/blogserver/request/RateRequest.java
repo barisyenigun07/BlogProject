@@ -5,6 +5,6 @@ import lombok.ToString;
 
 @Data
 @ToString
-public class RankRequest {
-    private double rankLevel;
+public class RateRequest {
+    private double rateLevel;
 }

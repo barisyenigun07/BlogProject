@@ -8,19 +8,19 @@ import lombok.Setter;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "rank")
+@Table(name = "rate")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Rank {
+public class Rate {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "post_rank_id_seq")
-    @SequenceGenerator(name = "post_rank_id_seq",sequenceName = "post_rank_id_seq",allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "post_rate_id_seq")
+    @SequenceGenerator(name = "post_rate_id_seq",sequenceName = "post_rate_id_seq",allocationSize = 1)
     @Column(name = "id")
     private Long id;
-    @Column(name = "rank_level")
-    private double rankLevel;
+    @Column(name = "rate_level")
+    private double rateLevel;
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "post_id")
     private Post post;

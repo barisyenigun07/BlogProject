@@ -10,13 +10,13 @@ import lombok.ToString;
 @Builder
 public class CommentResponse {
     private Long id;
-    private String comment;
+    private String content;
     private UserResponse userResponse;
 
     public static CommentResponse fromEntity(Comment comment){
         return CommentResponse.builder()
                 .id(comment.getId())
-                .comment(comment.getComment())
+                .content(comment.getContent())
                 .userResponse(UserResponse.fromEntity(comment.getUser()))
                 .build();
     }

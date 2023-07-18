@@ -6,5 +6,5 @@ import lombok.ToString;
 @Data
 @ToString
 public class CommentRequest {
-    private String comment;
+    private String content;
 }

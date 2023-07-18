@@ -33,7 +33,7 @@ public class CommentService {
         User user = userService.getAuthenticatedUser().orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
         Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException(ResourceType.POST));
         Comment comment = new Comment();
-        comment.setComment(body.getComment());
+        comment.setContent(body.getContent());
         comment.setPost(post);
         comment.setUser(user);
         commentRepository.save(comment);
@@ -56,7 +56,7 @@ public class CommentService {
         if (!comment.getUser().equals(user)){
             throw new UnauthorizedException();
         }
-        comment.setComment(body.getComment());
+        comment.setContent(body.getContent());
         commentRepository.save(comment);
     }
 

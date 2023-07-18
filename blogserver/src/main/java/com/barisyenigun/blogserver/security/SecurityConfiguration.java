@@ -44,7 +44,7 @@ public class SecurityConfiguration{
                 .authorizeHttpRequests()
                 .requestMatchers("/register").permitAll()
                 .requestMatchers("/login").permitAll()
-                .requestMatchers(HttpMethod.GET, "/post/**", "/comment/**", "/rank/**", "/user/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/post/**", "/comment/**", "/rate/**", "/user/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)

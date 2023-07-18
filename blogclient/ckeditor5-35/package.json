@@ -30,12 +30,12 @@
     "@ckeditor/ckeditor5-theme-lark": "^35.4.0",
     "@ckeditor/ckeditor5-typing": "^35.4.0",
     "css-loader": "^5.2.7",
-    "postcss": "^8.4.20",
+    "postcss": "^8.4.26",
     "postcss-loader": "^4.3.0",
     "raw-loader": "^4.0.2",
     "style-loader": "^2.0.0",
     "terser-webpack-plugin": "^4.2.3",
-    "webpack": "^5.75.0",
+    "webpack": "^5.88.1",
     "webpack-cli": "^4.10.0"
   },
   "scripts": {

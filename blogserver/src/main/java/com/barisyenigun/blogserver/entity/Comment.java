@@ -20,8 +20,8 @@ public class Comment {
     @Column(name = "id")
     private Long id;
     @Lob
-    @Column(name = "comment",nullable = false,columnDefinition = "TEXT")
-    private String comment;
+    @Column(name = "content",nullable = false,columnDefinition = "TEXT")
+    private String content;
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "post_id")
     private Post post;
