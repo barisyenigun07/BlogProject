@@ -6,8 +6,8 @@ export const register = async (data) => {
 }
 
 export const login = async (data) => {
-    return axios.post("/login", data)
-                .then(res => res.data)
+    axios.post("/login", data)
+                .then(res => localStorage.setItem("token", res.data.token))
                 .catch(err => {throw err});
 }
 

@@ -1,15 +1,16 @@
+import { Typography } from '@mui/material'
 import React from 'react'
-import Login from '../components/Login';
-import Navbar from '../components/Navbar';
 
-export default function HomePage() {
+const HomePage = () => {
   return (
-    <div>
-        <Navbar title="Blog Application"/>
-        <Login/>
-    </div>
+    <>
+      <Typography>Yapım Aşamasında...</Typography>
+    </>
+    
   )
 }
+
+export default HomePage
 
 
 

@@ -1,70 +1,153 @@
-import TextField from '@mui/material/TextField';
-import Button  from '@mui/material/Button';
-import Box from '@mui/material/Box'
-import axios from 'axios';
-import React, { useState } from 'react';
+import React from 'react'
+import { Grid, Typography, Box, TextField, Stack, Button, InputAdornment, Divider } from '@mui/material';
+import PersonIcon from '@mui/icons-material/Person';
+import EmailIcon from '@mui/icons-material/Email';
+import LockIcon from '@mui/icons-material/Lock';
+import LockPersonIcon from '@mui/icons-material/LockPerson';
+import { useFormik } from 'formik';
+import { register } from '../api/auth.api';
+
+import logo from '../assets/logo_transparent.png';
+import registerImage from '../assets/register-page-image.jpg'
+import { Link, useNavigate } from 'react-router-dom';
 
 const Register = () => {
-  const [name, setName] = useState("");
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordRepeat, setPasswordRepeat] = useState("");
-
-  return(
-      <Box 
-        component={"form"}
-        sx={{
-          '& .MuiTextField-root': {m: 1, width: '40ch'}
-        }}
-        noValidate>
-        <div>
-          <TextField label="İsim Soyisim" variant='outlined' type={"text"} onChange={(e) => {
-            e.preventDefault();
-            setName(e.target.value);
-          }}/>
-        </div>
-        <div>
-          <TextField label="Kullanıcı Adı" variant='outlined' type={"text"} onChange={(e) => {
-            e.preventDefault();
-            setUsername(e.target.value);
-          }}/>
-        </div>
-        <div>
-          <TextField label="Email" variant='outlined' type={"email"} onChange={(e) => {
-            e.preventDefault();
-            setEmail(e.target.value);
-          }}/>
-        </div>
-        <div>
-          <TextField label="Şifre" variant='outlined' type={"password"} onChange={(e) => {
-            e.preventDefault();
-            setPassword(e.target.value);
-          }}/>
-        </div>
-        <div>
-          <TextField label="Şifre Doğrulama" variant='outlined' type={"password"} onChange={(e) => {
-            e.preventDefault();
-            setPasswordRepeat(e.target.value);
-          }}/>
-        </div>
-        <div>
-          <Button variant='contained' onClick={(e) => {
-            e.preventDefault();
-            const body = {
-              name: name,
-              username: username,
-              email: email,
-              password: password,
-              passwordRepeat: passwordRepeat
-            };
-            axios.post("/register", body)
-                .catch(err => alert(err));
-          }}>Kayıt Ol</Button>
-        </div>
-        </Box>
-        
-  );
+  const navigate = useNavigate();
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      username: "",
+      email: "",
+      password: "",
+      passwordRepeat: ""
+    },
+    onSubmit: async (values) => {
+      try {
+        await register(values);
+        navigate("/login");
+      }
+      catch(err) {
+        alert(err);
+      }
+    }
+  });
+  return (
+    <>
+      <Grid container spacing={2}>
+        <Grid item xs={7} 
+          sx={{
+            backgroundImage: `url(${registerImage})`,
+            backgroundSize: "cover",
+            position: "relative",
+            display: "flex",
+            justifyContent: "center",
+            height: "101vh"
+          }}
+        >
+        </Grid>
+        <Grid item xs={5}>
+          <Box sx={{textAlign: "center", mt: 15}}>
+            <Stack spacing={2}>
+              <Box>
+                <img src={logo} alt='Logo' width={"100px"} height={"100px"}/>
+                <Typography sx={{fontSize: "30px", color: "#000"}}>Kayıt Ol</Typography>
+              </Box>
+              <Box>
+                <form onSubmit={formik.handleSubmit}>
+                  <Stack spacing={2}>
+                    <TextField
+                      id='name' 
+                      type='text' 
+                      value={formik.values.name} 
+                      onChange={formik.handleChange} 
+                      fullWidth 
+                      label="İsim Soyisim" 
+                      InputProps={{startAdornment: (
+                      <InputAdornment position='start'>
+                        <PersonIcon/>
+                      </InputAdornment>
+                      ),
+                    }}/>
+                    <TextField
+                      id='username' 
+                      type='text' 
+                      value={formik.values.username} 
+                      onChange={formik.handleChange} 
+                      fullWidth 
+                      label="Kullanıcı Adı" 
+                      InputProps={{startAdornment: (
+                      <InputAdornment position='start'>
+                        <PersonIcon/>
+                      </InputAdornment>
+                      ),
+                    }}/>
+                    <TextField
+                      id='email' 
+                      type='text' 
+                      value={formik.values.email} 
+                      onChange={formik.handleChange} 
+                      fullWidth 
+                      label="Email" 
+                      InputProps={{startAdornment: (
+                      <InputAdornment position='start'>
+                        <EmailIcon/>
+                      </InputAdornment>
+                      ),
+                    }}/>
+                    <TextField 
+                      id='password'
+                      type='password' 
+                      value={formik.values.password} 
+                      onChange={formik.handleChange} 
+                      fullWidth 
+                      label="Şifre"
+                      InputProps={{startAdornment: (
+                        <InputAdornment position='start'>
+                          <LockIcon/>
+                        </InputAdornment>
+                      ),
+                    }}
+                    />
+                    <TextField 
+                      id='passwordRepeat'
+                      type='password' 
+                      value={formik.values.passwordRepeat} 
+                      onChange={formik.handleChange} 
+                      fullWidth 
+                      label="Şifre Tekrar"
+                      InputProps={{startAdornment: (
+                        <InputAdornment position='start'>
+                          <LockPersonIcon/>
+                        </InputAdornment>
+                      ),
+                    }}
+                    />
+                    <Button 
+                      variant='contained' 
+                      color='error' 
+                      type='submit' 
+                      fullWidth
+                      sx={{
+                        height: "45px"
+                      }}
+                    >
+                      Kayıt Ol
+                    </Button>
+                  </Stack>
+                </form>
+              </Box>
+              <Box>
+                <Typography>Zaten hesabınız var mı? <Link to={"/login"}>Giriş Yap!</Link></Typography>
+              </Box>
+            </Stack>
+          </Box>
+          <Box mt={2}>
+            <Divider><Typography>Ya da</Typography></Divider>
+          </Box>
+        </Grid>
+      </Grid>
+    </>
+  )
 }
 
-export default Register;
+export default Register

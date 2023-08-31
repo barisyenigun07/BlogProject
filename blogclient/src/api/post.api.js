@@ -1,26 +1,21 @@
 import axios from "axios";
 
-const token = sessionStorage.getItem("token");
+const token = localStorage.getItem("token");
 
-export const createArticle = async (formData) => {
-    axios.post("/post/article", formData, {headers: {Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data"}})
-         .catch(err => {throw err});
-}
-
-export const createVideo = async (formData) => {
-    axios.post("/post/video", formData, {headers: {Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data"}})
-         .catch(err => {throw err});
-}
-
-export const createPodcast = async (formData) => {
-    axios.post("/post/podcast", formData, {headers: {Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data"}})
+export const createPost = async (formData) => {
+    axios.post("/post", formData, {headers: {Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data"}})
          .catch(err => {throw err});
 }
 
 export const getPost = async (id) => {
-    return axios.get(`/post/${id}`, {headers: {Authorization: `Bearer ${token}`}})
+    return await axios.get(`/post/${id}`, {headers: {Authorization: `Bearer ${token}`}})
                 .then(res => res.data)
                 .catch(err => {throw err});
+}
+
+export const updatePost = async (id, formData) => {
+    axios.put(`/post/${id}`, formData, {headers: {Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data"}})
+         .catch(err => {throw err});
 }
 
 export const deletePost = async (id) => {
