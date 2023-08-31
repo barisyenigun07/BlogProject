@@ -1,6 +1,6 @@
 package com.barisyenigun.blogserver.request;
 
-import com.barisyenigun.blogserver.entity.PostType;
+
 import com.barisyenigun.blogserver.entity.Tag;
 import lombok.Data;
 import lombok.ToString;
@@ -15,6 +15,6 @@ public class PostRequest {
     private String description;
     private MultipartFile captionPhoto;
     private Tag tag;
-    private PostType type;
+    private String postType;
     private LocalDate updatedDate = LocalDate.now();
 }

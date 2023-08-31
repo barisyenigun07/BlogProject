@@ -1,8 +1,7 @@
 package com.barisyenigun.blogserver.controller;
 
-import com.barisyenigun.blogserver.request.ArticleRequest;
-import com.barisyenigun.blogserver.request.PodcastRequest;
-import com.barisyenigun.blogserver.request.VideoRequest;
+
+import com.barisyenigun.blogserver.request.PostRequest;
 import com.barisyenigun.blogserver.response.PostResponse;
 import com.barisyenigun.blogserver.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,25 +19,15 @@ public class PostController {
         this.postService = postService;
     }
 
-    @PostMapping("/article")
-    public void createArticle(@ModelAttribute ArticleRequest body){
-        postService.createArticle(body);
+    @PostMapping
+    public void createPost(@ModelAttribute PostRequest postRequest){
+        postService.createPost(postRequest);
     }
 
     /*@PostMapping("/article/image/upload")
     public void uploadArticleImage(@RequestParam("file") MultipartFile file){
         postService.uploadArticleImage(file);
     }*/
-
-    @PostMapping( "/video")
-    public void createVideo(@ModelAttribute VideoRequest body){
-        postService.createVideo(body);
-    }
-
-    @PostMapping("/podcast")
-    public void createPodcast(@ModelAttribute PodcastRequest body){
-        postService.createPodcast(body);
-    }
 
     @GetMapping("/{id}")
     public PostResponse getPost(@PathVariable Long id){
@@ -58,6 +47,19 @@ public class PostController {
     @GetMapping("/{id}/content/download")
     public byte[] getFileContent(@PathVariable Long id){
         return postService.getFileContent(id);
+    }
+
+    /*@GetMapping
+    public Page<PostResponse> getPostsByUserAndPostType(@RequestParam("user_id") Long userId,
+                                                        @RequestParam("post_type") PostType postType,
+                                                        @RequestParam("page") int page,
+                                                        @RequestParam("size") int size){
+        return postService.getPostsByUserAndPostType(userId, postType, page, size);
+    }*/
+
+    @PutMapping("/{id}")
+    public void updatePost(@PathVariable Long id, @ModelAttribute PostRequest postRequest){
+        postService.updatePost(id, postRequest);
     }
 
     @DeleteMapping("/{id}")

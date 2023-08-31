@@ -1,6 +1,7 @@
 package com.barisyenigun.blogserver.response;
 
 import com.barisyenigun.blogserver.entity.Post;
+import com.barisyenigun.blogserver.entity.PostType;
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;

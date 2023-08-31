@@ -25,7 +25,7 @@ public class RateService {
         this.userService = userService;
     }
 
-    public void createRank(RateRequest body, Long postId){
+    public void createRate(RateRequest body, Long postId){
         User user = userService.getAuthenticatedUser().orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
         Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException(ResourceType.POST));
         Rate rate = new Rate();
@@ -35,12 +35,12 @@ public class RateService {
         rateRepository.save(rate);
     }
 
-    public double getAverageRankOfAPost(Long postId){
+    public double getAverageRateOfAPost(Long postId){
         Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException(ResourceType.POST));
-        return rateRepository.findAverageRank(post);
+        return rateRepository.findAverageRate(post);
     }
 
-    public void deleteRank(Long id){
+    public void deleteRate(Long id){
         User user = userService.getAuthenticatedUser().orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
         Rate rate = rateRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.RANK));
         if (!rate.getUser().equals(user)){
@@ -49,7 +49,7 @@ public class RateService {
         rateRepository.deleteById(id);
     }
 
-    public void updateRank(RateRequest body, Long id){
+    public void updateRate(RateRequest body, Long id){
         User user = userService.getAuthenticatedUser().orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
         Rate rate = rateRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.RANK));
         if (!rate.getUser().equals(user)){

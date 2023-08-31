@@ -7,12 +7,17 @@ import com.barisyenigun.blogserver.exception.ResourceNotFoundException;
 import com.barisyenigun.blogserver.exception.ResourceType;
 import com.barisyenigun.blogserver.exception.UnauthorizedException;
 import com.barisyenigun.blogserver.repository.PostRepository;
+import com.barisyenigun.blogserver.repository.UserRepository;
 import com.barisyenigun.blogserver.request.ArticleRequest;
 import com.barisyenigun.blogserver.request.PodcastRequest;
+import com.barisyenigun.blogserver.request.PostRequest;
 import com.barisyenigun.blogserver.request.VideoRequest;
 import com.barisyenigun.blogserver.response.PostResponse;
 import com.barisyenigun.blogserver.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -22,29 +27,53 @@ import java.util.stream.Collectors;
 public class PostService {
     private final PostRepository postRepository;
     private final UserService userService;
+
+    private final UserRepository userRepository;
     private final FileUtil fileUtil;
 
     @Autowired
-    public PostService(PostRepository postRepository, UserService userService, FileUtil fileUtil){
+    public PostService(PostRepository postRepository, UserService userService, UserRepository userRepository, FileUtil fileUtil){
         this.postRepository = postRepository;
         this.userService = userService;
+        this.userRepository = userRepository;
         this.fileUtil = fileUtil;
     }
 
-    public void createArticle(ArticleRequest body){
+    public void createPost(PostRequest postRequest) {
         User user = userService.getAuthenticatedUser().orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
         Post post = new Post();
-        post.setTitle(body.getTitle());
-        post.setDescription(body.getDescription());
+        post.setTitle(postRequest.getTitle());
+        post.setDescription(postRequest.getDescription());
 
-        String captionPhotoUrl = fileUtil.uploadFile(body.getCaptionPhoto(), "image/", "post_caption_photos");
+        String captionPhotoUrl = fileUtil.uploadFile(postRequest.getCaptionPhoto(), "image/", "post_caption_photos");
         post.setCaptionPhotoLink(captionPhotoUrl);
 
-        post.setContent(body.getContent());
-        post.setPostType(String.valueOf(body.getPostType()));
-        post.setModifiedDate(body.getUpdatedDate());
-        post.setTag(body.getTag());
+        post.setPostType(postRequest.getPostType());
+        post.setTag(postRequest.getTag());
         post.setUser(user);
+
+
+
+        switch (postRequest.getPostType()) {
+            case "ARTICLE":
+                ArticleRequest articleRequest = (ArticleRequest) postRequest;
+                post.setContent(articleRequest.getContent());
+                break;
+            case "VIDEO":
+                VideoRequest videoRequest = (VideoRequest) postRequest;
+                String videoUrl = fileUtil.uploadFile(videoRequest.getContent(), "video/", "videos");
+                post.setContent(videoUrl);
+                break;
+            case "PODCAST":
+                PodcastRequest podcastRequest = (PodcastRequest) postRequest;
+                String podcastUrl = fileUtil.uploadFile(podcastRequest.getContent(), "audio/", "podcasts");
+                post.setContent(podcastUrl);
+                break;
+            default:
+                System.out.println("Illegal post type!");
+
+        }
+
         postRepository.save(post);
     }
 
@@ -61,44 +90,6 @@ public class PostService {
         }
     }*/
 
-    public void createVideo(VideoRequest body){
-        User user = userService.getAuthenticatedUser().orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
-        Post post = new Post();
-        post.setTitle(body.getTitle());
-        post.setDescription(body.getDescription());
-
-        String captionPhotoUrl = fileUtil.uploadFile(body.getCaptionPhoto(), "image/", "post_caption_photos");
-        post.setCaptionPhotoLink(captionPhotoUrl);
-
-        String contentUrl = fileUtil.uploadFile(body.getContent(), "video/", "videos");
-        post.setContent(contentUrl);
-
-        post.setPostType(String.valueOf(body.getPostType()));
-        post.setModifiedDate(body.getUpdatedDate());
-        post.setTag(body.getTag());
-        post.setUser(user);
-        postRepository.save(post);
-
-    }
-    public void createPodcast(PodcastRequest body){
-        User user = userService.getAuthenticatedUser().orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
-        Post post = new Post();
-        post.setTitle(body.getTitle());
-        post.setDescription(body.getDescription());
-
-        String captionPhotoUrl = fileUtil.uploadFile(body.getCaptionPhoto(), "image/", "post_caption_photos");
-        post.setCaptionPhotoLink(captionPhotoUrl);
-
-        String contentUrl = fileUtil.uploadFile(body.getContent(), "audio/", "podcasts");
-        post.setContent(contentUrl);
-
-        post.setPostType(String.valueOf(body.getPostType()));
-        post.setModifiedDate(body.getUpdatedDate());
-        post.setTag(body.getTag());
-        post.setUser(user);
-        postRepository.save(post);
-    }
-
     public PostResponse getPost(Long id){
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.POST));
         return PostResponse.fromEntity(post);
@@ -114,9 +105,64 @@ public class PostService {
         return fileUtil.downloadFile(post.getPostType().toLowerCase() + "s", post.getContent());
     }
 
+    public Page<PostResponse> getPostsByUserAndPostType(Long userId, String postType, int page, int size){
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> postPage = postRepository.findAllByUserAndPostType(user, postType, pageable);
+        return postPage.map(post -> PostResponse.fromEntity(post));
+    }
+
     public List<PostResponse> getPosts(){
         List<Post> posts = postRepository.findAll();
         return posts.stream().map(post -> PostResponse.fromEntity(post)).collect(Collectors.toList());
+    }
+
+    public void updatePost(Long id, PostRequest postRequest){
+        User user = userService.getAuthenticatedUser().orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
+        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.POST));
+
+        if (!post.getUser().equals(user)) {
+            throw new UnauthorizedException();
+        }
+
+        post.setTitle(postRequest.getTitle());
+        post.setDescription(postRequest.getDescription());
+
+        if (postRequest.getCaptionPhoto() != null) {
+            if (post.getCaptionPhotoLink() != null) {
+                fileUtil.deleteFile("post_caption_photos", post.getCaptionPhotoLink());
+            }
+
+            String captionPhotoUrl = fileUtil.uploadFile(postRequest.getCaptionPhoto(), "image/", "post_caption_photos");
+            post.setCaptionPhotoLink(captionPhotoUrl);
+        }
+
+        post.setTag(postRequest.getTag());
+        post.setUser(user);
+
+        switch (post.getPostType()) {
+            case "ARTICLE":
+                ArticleRequest articleRequest = (ArticleRequest) postRequest;
+                post.setContent(articleRequest.getContent());
+                break;
+            case "VIDEO":
+                fileUtil.deleteFile("videos", post.getContent());
+                VideoRequest videoRequest = (VideoRequest) postRequest;
+                String videoUrl = fileUtil.uploadFile(videoRequest.getContent(), "video/", "videos");
+                post.setContent(videoUrl);
+                break;
+            case "PODCAST":
+                fileUtil.deleteFile("podcasts", post.getContent());
+                PodcastRequest podcastRequest = (PodcastRequest) postRequest;
+                String podcastUrl = fileUtil.uploadFile(podcastRequest.getContent(), "audio/", "podcasts");
+                post.setContent(podcastUrl);
+                break;
+            default:
+                System.out.println("Illegal post type!");
+
+        }
+
+        postRepository.save(post);
     }
 
     public void deletePost(Long id){
@@ -125,7 +171,11 @@ public class PostService {
         if (!post.getUser().equals(user)){
             throw new UnauthorizedException();
         }
-        fileUtil.deleteFile("post_caption_photos", post.getCaptionPhotoLink());
+
+        if (post.getCaptionPhotoLink() != null) {
+            fileUtil.deleteFile("post_caption_photos", post.getCaptionPhotoLink());
+        }
+
         if (post.getPostType().equals("VIDEO") || post.getPostType().equals("PODCAST")) {
             fileUtil.deleteFile((post.getPostType().toLowerCase() + "s"), post.getContent());
         }

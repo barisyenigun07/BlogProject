@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/rank")
+@RequestMapping("/rate")
 public class RateController {
     private final RateService rateService;
 
@@ -16,22 +16,22 @@ public class RateController {
     }
 
     @PostMapping
-    public void createRank(@RequestBody RateRequest body, @RequestParam Long postId){
-        rateService.createRank(body, postId);
+    public void createRate(@RequestBody RateRequest body, @RequestParam Long postId){
+        rateService.createRate(body, postId);
     }
 
     @GetMapping("/average")
-    public double getAverageRankOfAPost(@RequestParam Long postId){
-        return rateService.getAverageRankOfAPost(postId);
+    public double getAverageRateOfAPost(@RequestParam Long postId){
+        return rateService.getAverageRateOfAPost(postId);
     }
 
     @PutMapping("/{id}")
-    public void updateRank(@RequestBody RateRequest body, @PathVariable Long id){
-        rateService.updateRank(body, id);
+    public void updateRate(@RequestBody RateRequest body, @PathVariable Long id){
+        rateService.updateRate(body, id);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteRank(@PathVariable Long id){
-        rateService.deleteRank(id);
+    public void deleteRate(@PathVariable Long id){
+        rateService.deleteRate(id);
     }
 }

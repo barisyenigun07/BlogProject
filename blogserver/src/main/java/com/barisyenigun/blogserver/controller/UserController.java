@@ -26,6 +26,15 @@ public class UserController {
         userService.updateUser(body);
     }
 
+    @GetMapping("/{id}/profile-photo/download")
+    public byte[] getProfilePhoto(@PathVariable Long id) {
+        return userService.getProfilePhoto(id);
+    }
+
+    @GetMapping("/{id}/caption-photo/download")
+    public byte[] getCaptionPhoto(@PathVariable Long id) {
+        return userService.getCaptionPhoto(id);
+    }
 
 
 }
