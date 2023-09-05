@@ -21,7 +21,7 @@ const UserProfile = () => {
                     {(user?.profilePhotoLink == null) ? 
                     <Avatar>{user?.username[0]}</Avatar> 
                     : 
-                    <Avatar src={`http://localhost:8080/user/${id}/profile_photo/download`}
+                    <Avatar src={`http://localhost:8080/user/${id}/profile-photo/download`}
                     />}
                     <Typography></Typography>
                 </Box>
