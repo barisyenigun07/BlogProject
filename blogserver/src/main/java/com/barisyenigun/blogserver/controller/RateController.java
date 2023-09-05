@@ -1,6 +1,7 @@
 package com.barisyenigun.blogserver.controller;
 
 import com.barisyenigun.blogserver.request.RateRequest;
+import com.barisyenigun.blogserver.response.AverageRateResponse;
 import com.barisyenigun.blogserver.service.RateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +17,12 @@ public class RateController {
     }
 
     @PostMapping
-    public void createRate(@RequestBody RateRequest body, @RequestParam Long postId){
+    public void createRate(@RequestBody RateRequest body, @RequestParam("post_id") Long postId){
         rateService.createRate(body, postId);
     }
 
     @GetMapping("/average")
-    public double getAverageRateOfAPost(@RequestParam Long postId){
+    public AverageRateResponse getAverageRateOfAPost(@RequestParam("post_id") Long postId){
         return rateService.getAverageRateOfAPost(postId);
     }
 

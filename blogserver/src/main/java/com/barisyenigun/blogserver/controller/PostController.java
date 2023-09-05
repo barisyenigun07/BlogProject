@@ -24,7 +24,7 @@ public class PostController {
         postService.createPost(postRequest);
     }
 
-    /*@PostMapping("/article/image/upload")
+    /*@PostMapping("/upload-article-image")
     public void uploadArticleImage(@RequestParam("file") MultipartFile file){
         postService.uploadArticleImage(file);
     }*/
@@ -39,7 +39,7 @@ public class PostController {
         return postService.getPosts();
     }
 
-    @GetMapping("/{id}/caption_photo/download")
+    @GetMapping("/{id}/caption-photo/download")
     public byte[] getCaptionPhoto(@PathVariable Long id){
         return postService.getCaptionPhoto(id);
     }

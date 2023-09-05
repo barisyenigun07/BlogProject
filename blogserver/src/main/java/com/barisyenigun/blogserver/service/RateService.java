@@ -9,6 +9,7 @@ import com.barisyenigun.blogserver.exception.UnauthorizedException;
 import com.barisyenigun.blogserver.repository.PostRepository;
 import com.barisyenigun.blogserver.repository.RateRepository;
 import com.barisyenigun.blogserver.request.RateRequest;
+import com.barisyenigun.blogserver.response.AverageRateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,9 +36,13 @@ public class RateService {
         rateRepository.save(rate);
     }
 
-    public double getAverageRateOfAPost(Long postId){
+    public AverageRateResponse getAverageRateOfAPost(Long postId){
         Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException(ResourceType.POST));
-        return rateRepository.findAverageRate(post);
+        double averageRateLevelOfPost = rateRepository.findAverageRate(post);
+        return AverageRateResponse.builder()
+                .averageRateLevel(averageRateLevelOfPost)
+                .postId(postId)
+                .build();
     }
 
     public void deleteRate(Long id){
@@ -52,6 +57,7 @@ public class RateService {
     public void updateRate(RateRequest body, Long id){
         User user = userService.getAuthenticatedUser().orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
         Rate rate = rateRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.RANK));
+
         if (!rate.getUser().equals(user)){
             throw new UnauthorizedException();
         }

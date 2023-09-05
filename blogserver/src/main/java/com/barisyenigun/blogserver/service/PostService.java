@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,7 +28,6 @@ import java.util.stream.Collectors;
 public class PostService {
     private final PostRepository postRepository;
     private final UserService userService;
-
     private final UserRepository userRepository;
     private final FileUtil fileUtil;
 
@@ -41,12 +41,15 @@ public class PostService {
 
     public void createPost(PostRequest postRequest) {
         User user = userService.getAuthenticatedUser().orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
+
         Post post = new Post();
         post.setTitle(postRequest.getTitle());
         post.setDescription(postRequest.getDescription());
 
-        String captionPhotoUrl = fileUtil.uploadFile(postRequest.getCaptionPhoto(), "image/", "post_caption_photos");
-        post.setCaptionPhotoLink(captionPhotoUrl);
+        if (postRequest.getCaptionPhoto() != null) {
+            String captionPhotoUrl = fileUtil.uploadFile(postRequest.getCaptionPhoto(), "image/", "post_caption_photos");
+            post.setCaptionPhotoLink(captionPhotoUrl);
+        }
 
         post.setPostType(postRequest.getPostType());
         post.setTag(postRequest.getTag());
@@ -77,18 +80,9 @@ public class PostService {
         postRepository.save(post);
     }
 
-    /*public void uploadArticleImage(MultipartFile file) {
-        FileUtil.isProperType(file, "image/");
-        Map<String, String> metadata = FileUtil.extractMetadata(file);
-        String path = String.format("%s/image", BucketName.STORAGE_BUCKET.getBucketName());
-        String filename = String.format("%s-%s", UUID.randomUUID(), file.getOriginalFilename());
-        try {
-            storageService.upload(path, filename, Optional.of(metadata), file.getInputStream());
-        }
-        catch (IOException e){
-            throw new FileUploadException();
-        }
-    }*/
+    public void uploadArticleImage(MultipartFile file) {
+        fileUtil.uploadFile(file, "image/", "article_images");
+    }
 
     public PostResponse getPost(Long id){
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.POST));

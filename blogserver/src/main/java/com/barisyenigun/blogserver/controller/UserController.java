@@ -21,11 +21,6 @@ public class UserController {
         return userService.getUser(id);
     }
 
-    @PutMapping
-    public void updateUser(@ModelAttribute UpdateUserRequest body){
-        userService.updateUser(body);
-    }
-
     @GetMapping("/{id}/profile-photo/download")
     public byte[] getProfilePhoto(@PathVariable Long id) {
         return userService.getProfilePhoto(id);
@@ -36,5 +31,14 @@ public class UserController {
         return userService.getCaptionPhoto(id);
     }
 
+    @PutMapping
+    public void updateUser(@ModelAttribute UpdateUserRequest body){
+        userService.updateUser(body);
+    }
+
+    @DeleteMapping
+    public void deleteUser() {
+        userService.deleteUser();
+    }
 
 }

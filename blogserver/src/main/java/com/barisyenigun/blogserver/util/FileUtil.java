@@ -59,7 +59,6 @@ public class FileUtil {
         catch (IOException e){
             throw new FileUploadException();
         }
-
     }
 
     public byte[] downloadFile(String destination, String filename){

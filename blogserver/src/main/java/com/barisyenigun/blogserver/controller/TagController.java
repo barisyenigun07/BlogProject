@@ -23,9 +23,9 @@ public class TagController {
         tagService.createTag(body);
     }
 
-    @GetMapping("/{tagId}")
-    public TagResponse getTag(@PathVariable Long tagId){
-        return tagService.getTag(tagId);
+    @GetMapping("/{id}")
+    public TagResponse getTag(@PathVariable Long id){
+        return tagService.getTag(id);
     }
 
     @GetMapping

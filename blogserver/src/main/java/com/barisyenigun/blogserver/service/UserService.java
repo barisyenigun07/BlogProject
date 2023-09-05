@@ -13,8 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-
-
 import java.util.*;
 
 @Service
@@ -45,21 +43,6 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
         return UserResponse.fromEntity(user);
     }
-    public void updateUser(UpdateUserRequest body){
-        User user = getAuthenticatedUser().orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
-        user.setName(body.getName());
-        user.setUsername(body.getUsername());
-        user.setEmail(body.getEmail());
-
-        String captionPhotoLink = fileUtil.uploadFile(body.getCaptionPhoto(), "image/", "user_caption_photos");
-        user.setCaptionPhotoLink(captionPhotoLink);
-
-        String profilePhotoLink = fileUtil.uploadFile(body.getProfilePhoto(), "image/", "user_profile_photos");
-        user.setProfilePhotoLink(profilePhotoLink);
-
-        userRepository.save(user);
-    }
-
     public byte[] getProfilePhoto(Long id){
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
         return fileUtil.downloadFile("user_profile_photos", user.getProfilePhotoLink());
@@ -70,9 +53,36 @@ public class UserService {
         return fileUtil.downloadFile("user_caption_photos", user.getProfilePhotoLink());
     }
 
-    /*public byte[] downloadProfilePhoto(Long id){
-        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
-        String path = String.format("%s/%s",BucketName.STORAGE_BUCKET.getBucketName(),user.getId());
-        return storageService.download(path, user.getProfilePhotoLink());
-    }*/
+    public void updateUser(UpdateUserRequest body){
+        User user = getAuthenticatedUser().orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
+        user.setName(body.getName());
+        user.setUsername(body.getUsername());
+        user.setEmail(body.getEmail());
+
+        if (body.getCaptionPhoto() != null) {
+            if (user.getCaptionPhotoLink() != null) {
+                fileUtil.deleteFile("user_caption_photos", user.getCaptionPhotoLink());
+            }
+
+            String captionPhotoLink = fileUtil.uploadFile(body.getCaptionPhoto(), "image/", "user_caption_photos");
+            user.setCaptionPhotoLink(captionPhotoLink);
+        }
+
+        if (body.getProfilePhoto() != null) {
+            if (user.getProfilePhotoLink() != null) {
+                fileUtil.deleteFile("user_profile_photos", user.getProfilePhotoLink());
+            }
+
+            String profilePhotoLink = fileUtil.uploadFile(body.getProfilePhoto(), "image/", "user_profile_photos");
+            user.setProfilePhotoLink(profilePhotoLink);
+        }
+
+
+        userRepository.save(user);
+    }
+
+    public void deleteUser() {
+        User user = getAuthenticatedUser().orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
+        userRepository.delete(user);
+    }
 }
