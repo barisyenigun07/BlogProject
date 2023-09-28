@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react'
 import { getTags } from '../api/tag.api';
 import { createPost } from '../api/post.api';
 import { useNavigate } from 'react-router-dom';
+import { AudioFile, VideoFile } from '@mui/icons-material';
 
 const CreatePost = () => {
   const navigate = useNavigate();
@@ -18,6 +19,8 @@ const CreatePost = () => {
   const [content, setContent] = useState(null);
 
   const [tags, setTags] = useState([]);
+
+  
 
   useEffect(() => {
     const fetchAllTags = async () => {
@@ -124,6 +127,7 @@ const CreatePost = () => {
                 variant='contained'
                 component="label"
                 color='error'
+                startIcon={<VideoFile/>}
               >
                 Video Ekle
                 <input
@@ -139,6 +143,7 @@ const CreatePost = () => {
                 variant='contained'
                 component="label"
                 color='error'
+                startIcon={<AudioFile/>}
               >
                 Podcast Ekle
                 <input

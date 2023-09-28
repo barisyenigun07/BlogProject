@@ -1,7 +1,12 @@
-import { AdbIcon, MenuIcon } from '@mui/icons-material'
+import SearchIcon from '@mui/icons-material/Search';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import { styled, alpha } from '@mui/material/styles';
-import { AppBar, Box, Container, IconButton, Toolbar, Typography, InputBase, Menu, MenuItem } from '@mui/material'
-import React, { useState } from 'react'
+import { AppBar, Box, IconButton, Toolbar, Typography, InputBase, Badge, Button, Stack, Avatar } from '@mui/material'
+import  logo from '../assets/logo_transparent.png'
+import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { authActions } from '../redux/authSlice';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -14,7 +19,7 @@ const Search = styled('div')(({ theme }) => ({
   marginLeft: 0,
   width: '100%',
   [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(3),
+    marginLeft: theme.spacing(40),
     width: 'auto',
   },
 }));
@@ -38,7 +43,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     transition: theme.transitions.create('width'),
     width: '100%',
     [theme.breakpoints.up('md')]: {
-      width: '20ch',
+      width: '100ch',
     },
   },
 }));
@@ -47,88 +52,114 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 
 const Navbar = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [mobileAnchorEl, setMobileAnchorEl] = useState(null);
-
-  const isMenuOpen = Boolean(anchorEl);
-  const isMobileMenuOpen = Boolean(mobileAnchorEl);
-
-  const handleProfileMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  }
-
-  const handleMobileMenuClose = () => {
-    setMobileAnchorEl(null);
-  }
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    handleMenuClose();
-  }
-
-  const handleMobileMenuOpen = (event) => {
-    setMobileAnchorEl(event.currentTarget);
-  }
-
-  const menuId = 'primary-search-account-menu';
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem>Profil</MenuItem>
-      <MenuItem color='error'>Çıkış Yap</MenuItem>
-    </Menu>
-  );
+  const { authUser } = useSelector((state) => state.auth);
+  const [searchedItem, setSearchedItem] = useState("");
   
-  
-
   return (
-    <AppBar position='static'>
-      <Container>
-        <Toolbar>
-          <AdbIcon sx={{display: {xs: 'none', md: 'flex'}, mr: 1}}/>
-          <Typography
-              variant='h6'
-              noWrap
-              component={"a"}
-              href="/"
+    <>
+    <AppBar style={{ background: '#2E3B55' }}>
+      <Toolbar sx={{justifyContent: "center"}}>
+          <Stack
+            direction={"row"}
+            spacing={2}
+            component={Link}
+            to="/"
+            sx={{
+              alignItems: 'center',
+              textDecoration: "none",
+            }}
+          >
+            <Box
+              component={"img"}
               sx={{
-                mr: 2,
-                display: {xs: 'none', md: 'flex'},
-                fontFamily: 'monospace',
-                fontWeight: 700,
-                letterSpacing: '.3rem',
-                color: 'inherit',
-                textDecoration: 'none',
-            }}>
-              LOGO
-          </Typography>
-          <Box sx={{flexGrow: 1, display: {xs: 'flex', md: 'none'}}}>
-            <IconButton
-                size='large'
-                aria-label='account of current user'
-                aria-controls='menu-appbar'
-                aria-haspopup="true"
-                color='inherit'
+                height: 64,
+              }}
+              alt='Logo'
+              src={logo}
+            />
+            <Typography
+                variant='h6'
+                
+                sx={{
+                  mr: 2,
+                  display: {xs: 'none', md: 'flex'},
+                  fontWeight: 700,
+                  letterSpacing: '.3rem',
+                  color: 'white',
+                  
+              }}>
+                JOTTER
+            </Typography>
+            </Stack>
+            
+          <Search>
+            <SearchIconWrapper>
+              <SearchIcon/>
+            </SearchIconWrapper>
+            <StyledInputBase
+              placeholder='Ara...'
+              inputProps={{'aria-label': 'search'}}
+              sx={{
+                width: "700px",
+              }}
+              value={searchedItem}
+              onChange={(e) => setSearchedItem(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  console.log(searchedItem);
+                  setSearchedItem("");
+                }
+                
+              }}
+            />
+          </Search>
+          <Box sx={{flexGrow: 1}}/>
+          {(authUser == null ? 
+          <Stack direction={"row"} spacing={3}>
+            <Button
+              color='warning'
+              variant='contained'
+              sx={{
+                height: "45px"
+              }}
             >
-              <MenuIcon/>
+              <Link to={"/register"} style={{textDecoration: "none", color: "white"}}>Kayıt Ol</Link>
+            </Button>
+            <Button
+              color='warning'
+              variant='contained'
+              sx={{
+                height: "45px"
+              }}
+            >
+              <Link to={"/login"} style={{textDecoration: "none", color: "white"}}>Giriş yap</Link>
+            </Button>
+          </Stack> 
+          :
+          <Stack direction={"row"} spacing={3}>
+            <Button
+              color='warning'
+              variant='contained'
+              sx={{
+                height: "45px"
+              }}
+            >
+              <Link to={"/post/create"} style={{textDecoration: "none", color: "white"}}>Yayınla</Link>
+            </Button>
+            <IconButton size='large' aria-label='show notifications' color='inherit'>
+              <Badge badgeContent={4} color='error'>
+                <NotificationsIcon/>
+              </Badge>
             </IconButton>
-          </Box>
-        </Toolbar>
-      </Container>
-    </AppBar>
+            {authUser?.profilePhotoLink == null ? <Avatar>{authUser?.username.charAt(0)}</Avatar> : <Avatar src={`http://localhost:8080/user/${authUser?.id}/profile-photo/download`}/>}
+          </Stack>)}
+          
+      </Toolbar>
+      
+      </AppBar>
+      <Toolbar/>
+    </>
   )
 }
 

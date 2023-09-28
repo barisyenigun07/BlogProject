@@ -1,14 +1,23 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom';
+import { getPost } from '../api/post.api';
 
 const PostDetail = () => {
-  const [post, setPost] = useState({});
-  
+  const [post, setPost] = useState(null);
+  const { id } = useParams();
+
   useEffect(() => {
-    axios.get(`/post/`)
+    const fetchPost = async () => {
+      const post = await getPost(id);
+      setPost(post);
+    }
+
+    fetchPost();
   }, []);
   return (
-    <div>PostDetail</div>
+    <>
+      
+    </>
   )
 }
 

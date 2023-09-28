@@ -1,13 +1,13 @@
 import axios from "axios";
 
 export const register = async (data) => {
-    axios.post("/register", data)
+    await axios.post("/register", data)
          .catch(err => {throw err});
 }
 
 export const login = async (data) => {
-    axios.post("/login", data)
-                .then(res => localStorage.setItem("token", res.data.token))
+    return await axios.post("/login", data)
+                .then(res => res.data)
                 .catch(err => {throw err});
 }
 

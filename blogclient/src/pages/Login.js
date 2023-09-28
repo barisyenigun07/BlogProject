@@ -7,13 +7,18 @@ import React from 'react'
 
 import logo from '../assets/logo_transparent.png';
 import loginImage from '../assets/login-page-image.jpg';
-import { login } from '../api/auth.api';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { userLogin } from '../redux/authActions';
 
 
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  
+  
   const formik = useFormik({
     initialValues: {
       username: "",
@@ -21,15 +26,21 @@ const Login = () => {
     },
     onSubmit: async (values) => {
       try {
-        await login(values);
-        navigate("/");
+        dispatch(userLogin(values))
+          .unwrap()
+          .then(() => {
+            navigate("/");
+          })
+          .catch(() => {
+
+          })
       }
       catch (err) {
-        alert(err);
+
       }
-      
     }
   });
+
   return (
     <>
       <Grid container spacing={2}>
@@ -96,7 +107,7 @@ const Login = () => {
                 </form>
               </Box>
               <Box>
-                <Typography>Hesabınız yok mu? <Link to={"/register"}>Kayıt Ol!</Link></Typography>
+                <Typography>Hesabınız yok mu? <Link to={"/register"} style={{color: "aquamarine", textDecoration: "none"}}>Kayıt Ol!</Link></Typography>
               </Box>
             </Stack>
           </Box>

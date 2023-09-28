@@ -1,10 +1,15 @@
-import { Typography } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useSelector } from 'react-redux'
 
 const HomePage = () => {
+  const { authUser } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    console.log(authUser);
+  }, []);
   return (
     <>
-      <Typography>Yapım Aşamasında...</Typography>
+      
     </>
     
   )

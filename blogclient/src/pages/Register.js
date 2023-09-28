@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Grid, Typography, Box, TextField, Stack, Button, InputAdornment, Divider } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import EmailIcon from '@mui/icons-material/Email';
@@ -10,9 +10,19 @@ import { register } from '../api/auth.api';
 import logo from '../assets/logo_transparent.png';
 import registerImage from '../assets/register-page-image.jpg'
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Register = () => {
   const navigate = useNavigate();
+  const {loading, authUser, error, success} = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (success) {
+      navigate("/login");
+    }
+  }, [navigate, authUser, success]);
+
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -22,13 +32,7 @@ const Register = () => {
       passwordRepeat: ""
     },
     onSubmit: async (values) => {
-      try {
-        await register(values);
-        navigate("/login");
-      }
-      catch(err) {
-        alert(err);
-      }
+      
     }
   });
   return (
@@ -137,7 +141,7 @@ const Register = () => {
                 </form>
               </Box>
               <Box>
-                <Typography>Zaten hesabınız var mı? <Link to={"/login"}>Giriş Yap!</Link></Typography>
+                <Typography>Zaten hesabınız var mı? <Link style={{color: "aquamarine", textDecoration: "none"}} to={"/login"}>Giriş Yap!</Link></Typography>
               </Box>
             </Stack>
           </Box>

@@ -4,7 +4,8 @@ const token = localStorage.getItem("token");
 
 export const createPost = async (formData) => {
     axios.post("/post", formData, {headers: {Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data"}})
-         .catch(err => {throw err});
+        .then(res => res.status)
+        .catch(err => {throw err});
 }
 
 export const getPost = async (id) => {
@@ -15,11 +16,13 @@ export const getPost = async (id) => {
 
 export const updatePost = async (id, formData) => {
     axios.put(`/post/${id}`, formData, {headers: {Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data"}})
-         .catch(err => {throw err});
+        .then(res => res.status)
+        .catch(err => {throw err});
 }
 
 export const deletePost = async (id) => {
     axios.delete(`/post/${id}`, {headers: {Authorization: `Bearer ${token}`}})
-         .catch(err => {throw err});
+        .then(res => res.status)
+        .catch(err => {throw err});
 }
 
