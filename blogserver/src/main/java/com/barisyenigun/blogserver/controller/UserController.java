@@ -1,5 +1,7 @@
 package com.barisyenigun.blogserver.controller;
 
+import com.barisyenigun.blogserver.exception.ResourceNotFoundException;
+import com.barisyenigun.blogserver.exception.ResourceType;
 import com.barisyenigun.blogserver.request.UpdateUserRequest;
 import com.barisyenigun.blogserver.response.UserResponse;
 import com.barisyenigun.blogserver.service.UserService;
@@ -14,6 +16,11 @@ public class UserController {
     @Autowired
     public UserController(UserService userService){
         this.userService = userService;
+    }
+
+    @GetMapping("/auth")
+    public UserResponse getAuthUser() {
+        return UserResponse.fromEntity(userService.getAuthenticatedUser().orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER)));
     }
 
     @GetMapping("/{id}")

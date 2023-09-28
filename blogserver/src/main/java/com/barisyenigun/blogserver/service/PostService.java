@@ -56,25 +56,22 @@ public class PostService {
         post.setUser(user);
 
 
-
         switch (postRequest.getPostType()) {
-            case "ARTICLE":
+            case "ARTICLE" -> {
                 ArticleRequest articleRequest = (ArticleRequest) postRequest;
                 post.setContent(articleRequest.getContent());
-                break;
-            case "VIDEO":
+            }
+            case "VIDEO" -> {
                 VideoRequest videoRequest = (VideoRequest) postRequest;
                 String videoUrl = fileUtil.uploadFile(videoRequest.getContent(), "video/", "videos");
                 post.setContent(videoUrl);
-                break;
-            case "PODCAST":
+            }
+            case "PODCAST" -> {
                 PodcastRequest podcastRequest = (PodcastRequest) postRequest;
                 String podcastUrl = fileUtil.uploadFile(podcastRequest.getContent(), "audio/", "podcasts");
                 post.setContent(podcastUrl);
-                break;
-            default:
-                System.out.println("Illegal post type!");
-
+            }
+            default -> System.out.println("Illegal post type!");
         }
 
         postRepository.save(post);
@@ -132,28 +129,25 @@ public class PostService {
         }
 
         post.setTag(postRequest.getTag());
-        post.setUser(user);
 
         switch (post.getPostType()) {
-            case "ARTICLE":
+            case "ARTICLE" -> {
                 ArticleRequest articleRequest = (ArticleRequest) postRequest;
                 post.setContent(articleRequest.getContent());
-                break;
-            case "VIDEO":
+            }
+            case "VIDEO" -> {
                 fileUtil.deleteFile("videos", post.getContent());
                 VideoRequest videoRequest = (VideoRequest) postRequest;
                 String videoUrl = fileUtil.uploadFile(videoRequest.getContent(), "video/", "videos");
                 post.setContent(videoUrl);
-                break;
-            case "PODCAST":
+            }
+            case "PODCAST" -> {
                 fileUtil.deleteFile("podcasts", post.getContent());
                 PodcastRequest podcastRequest = (PodcastRequest) postRequest;
                 String podcastUrl = fileUtil.uploadFile(podcastRequest.getContent(), "audio/", "podcasts");
                 post.setContent(podcastUrl);
-                break;
-            default:
-                System.out.println("Illegal post type!");
-
+            }
+            default -> System.out.println("Illegal post type!");
         }
 
         postRepository.save(post);

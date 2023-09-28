@@ -43,7 +43,7 @@ public class SecurityConfiguration{
                 .authorizeHttpRequests()
                 .requestMatchers("/register").permitAll()
                 .requestMatchers("/login").permitAll()
-                .requestMatchers(HttpMethod.GET, "/post/**", "/comment/**", "/rate/**", "/user/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/post/**", "/comment/**", "/tag/**", "/rate/**", "/user/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)

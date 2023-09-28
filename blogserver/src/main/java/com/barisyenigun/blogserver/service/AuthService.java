@@ -7,6 +7,7 @@ import com.barisyenigun.blogserver.request.ChangePasswordRequest;
 import com.barisyenigun.blogserver.request.LoginRequest;
 import com.barisyenigun.blogserver.request.RegisterRequest;
 import com.barisyenigun.blogserver.response.AuthResponse;
+import com.barisyenigun.blogserver.response.UserResponse;
 import com.barisyenigun.blogserver.security.JwtUserDetailsService;
 import com.barisyenigun.blogserver.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,9 +70,9 @@ public class AuthService {
         final String jwtToken = jwtUtil.generateJwtToken(userDetails);
         return AuthResponse.builder()
                 .token(jwtToken)
+                .user(UserResponse.fromEntity(optionalUser.get()))
                 .build();
     }
-
     public void changePassword(Long userId, ChangePasswordRequest body){
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
         if (body.getNewPassword().equals(body.getNewPasswordRepeat())){
