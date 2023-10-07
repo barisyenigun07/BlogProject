@@ -1,43 +1,51 @@
-import { Grid, Stack, Typography, TextField, Button, InputAdornment } from '@mui/material';
+import { Grid, Stack, Typography, TextField, Button, InputAdornment, CircularProgress} from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import LockIcon from '@mui/icons-material/Lock';
 import { Box } from '@mui/system';
 import { useFormik } from 'formik';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import logo from '../assets/logo_transparent.png';
 import loginImage from '../assets/login-page-image.jpg';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { userLogin } from '../redux/authActions';
+import SnackbarMessage from '../components/SnackbarMessage';
+import { messageActions } from '../redux/messageSlice';
 
 
 
 const Login = () => {
+  const { isLoggedIn } = useSelector((state) => state.auth);
+  const { message } = useSelector((state) => state.message);
+
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  
-  
+  useEffect(() => {
+    dispatch(messageActions.clearMessage());
+  }, [dispatch]);
+
   const formik = useFormik({
     initialValues: {
       username: "",
       password: ""
     },
     onSubmit: async (values) => {
-      try {
-        dispatch(userLogin(values))
-          .unwrap()
-          .then(() => {
+      setLoading(true);
+      dispatch(userLogin(values))
+        .unwrap()
+        .then(() => {
+          setTimeout(() => {
             navigate("/");
-          })
-          .catch(() => {
-
-          })
-      }
-      catch (err) {
-
-      }
+            window.location.reload();
+          }, 1000);
+        })
+        .catch(() => {
+          setLoading(false);
+        })
     }
   });
 
@@ -51,7 +59,8 @@ const Login = () => {
             position: "relative",
             display: "flex",
             justifyContent: "center",
-            height: "100vh"
+            minHeight: "100vh",
+            height: "100%"
           }}
         >
         </Grid>
@@ -100,6 +109,7 @@ const Login = () => {
                       sx={{
                         height: "45px"
                       }}
+                      startIcon={(loading) ? <CircularProgress sx={{color: "white"}}/> : null}
                     >
                       Giriş Yap
                     </Button>
@@ -113,6 +123,11 @@ const Login = () => {
           </Box>
         </Grid>
       </Grid>
+      <SnackbarMessage
+        open={message !== ""}
+        message={message}
+        severity={isLoggedIn ? 'success' : 'error'}
+      />
     </>
   )
 }

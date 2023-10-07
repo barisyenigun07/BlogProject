@@ -3,31 +3,49 @@ import { registerUser, userLogin } from "./authActions";
 
 
 
-const token = localStorage.getItem("token") ? localStorage.getItem("token") : null;
-
 const authSlice = createSlice({
     name: 'auth',
     initialState: {
-        token,
+        registerSuccess: false,
         isLoggedIn: false,
-        loading: true,
+        loading: false,
         authUser: null,
     },
-    extraReducers: {
-        [registerUser.fulfilled]: (state, action) => {
-            state.isLoggedIn = false;
-        },
-        [registerUser.rejected]: (state, action) => {
-            state.isLoggedIn = false;
-        },
-        [userLogin.fulfilled]: (state, action) => {
-            state.isLoggedIn = true;
-            state.authUser = action.payload.user;
-        },
-        [userLogin.rejected]: (state, action) => {
-            state.isLoggedIn = false;
+    reducers: {
+        logout: (state) => {
+            localStorage.removeItem("token");
             state.authUser = null;
+            state.isLoggedIn = false;
+            state.loading = false;
         }
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(registerUser.pending, (state) => {
+                state.registerSuccess = false;
+                state.loading = true;
+            })
+            .addCase(registerUser.fulfilled, (state) => {
+                state.registerSuccess = true;
+                state.loading = false;
+            })
+            .addCase(registerUser.rejected, (state) => {
+                state.registerSuccess = false;
+                state.loading = false;
+            })
+            .addCase(userLogin.pending, (state) => {
+                state.isLoggedIn = false;
+                state.loading = true;
+            })
+            .addCase(userLogin.fulfilled, (state, action) => {
+                state.isLoggedIn = true;
+                state.loading = false;
+                state.authUser = action.payload.user;
+            })
+            .addCase(userLogin.rejected, (state) => {
+                state.isLoggedIn = false;
+                state.loading = false;
+            })
     }
 });
 

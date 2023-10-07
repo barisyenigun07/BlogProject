@@ -1,10 +1,10 @@
 import SearchIcon from '@mui/icons-material/Search';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { styled, alpha } from '@mui/material/styles';
-import { AppBar, Box, IconButton, Toolbar, Typography, InputBase, Badge, Button, Stack, Avatar } from '@mui/material'
+import { AppBar, Box, IconButton, Toolbar, Typography, InputBase, Badge, Button, Stack, Avatar, Menu, MenuItem } from '@mui/material'
 import  logo from '../assets/logo_transparent.png'
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { authActions } from '../redux/authSlice';
 
@@ -54,6 +54,21 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const Navbar = () => {
   const { authUser } = useSelector((state) => state.auth);
   const [searchedItem, setSearchedItem] = useState("");
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [anchorElUser, setAnchorElUser] = useState(null);
+
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  }
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  }
+
+  
   
   return (
     <>
@@ -152,7 +167,37 @@ const Navbar = () => {
                 <NotificationsIcon/>
               </Badge>
             </IconButton>
-            {authUser?.profilePhotoLink == null ? <Avatar>{authUser?.username.charAt(0)}</Avatar> : <Avatar src={`http://localhost:8080/user/${authUser?.id}/profile-photo/download`}/>}
+            <Box>
+              <IconButton onClick={handleOpenUserMenu}>
+                {authUser?.profilePhotoLink == null ? <Avatar>{authUser?.username.charAt(0)}</Avatar> : <Avatar src={`http://localhost:8080/user/${authUser?.id}/profile-photo/download`}/>}
+              </IconButton>
+              <Menu
+                sx={{mt: "45px"}}
+                id='menu-appbar'
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                <MenuItem key={"profile"} onClick={(e) => navigate(`/user/${authUser?.id}`)}>
+                  <Typography>Profil</Typography>
+                </MenuItem>
+                <MenuItem key={"logout"} onClick={(e) => {
+                  dispatch(authActions.logout());
+                  navigate("/login");
+                }}>
+                  <Typography color={"error"}>Çıkış Yap</Typography>
+                </MenuItem>
+              </Menu>
+            </Box>
           </Stack>)}
           
       </Toolbar>

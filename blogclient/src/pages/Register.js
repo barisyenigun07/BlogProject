@@ -1,27 +1,29 @@
 import React, { useEffect } from 'react'
-import { Grid, Typography, Box, TextField, Stack, Button, InputAdornment, Divider } from '@mui/material';
+import { Grid, Typography, Box, TextField, Stack, Button, InputAdornment, Divider, CircularProgress } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
 import LockPersonIcon from '@mui/icons-material/LockPerson';
 import { useFormik } from 'formik';
-import { register } from '../api/auth.api';
+
 
 import logo from '../assets/logo_transparent.png';
 import registerImage from '../assets/register-page-image.jpg'
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { registerUser } from '../redux/authActions';
+import SnackbarMessage from '../components/SnackbarMessage';
+import { messageActions } from '../redux/messageSlice';
 
 const Register = () => {
   const navigate = useNavigate();
-  const {loading, authUser, error, success} = useSelector((state) => state.auth);
+  const { loading, registerSuccess } = useSelector((state) => state.auth);
+  const { message } = useSelector((state) => state.message);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (success) {
-      navigate("/login");
-    }
-  }, [navigate, authUser, success]);
+    dispatch(messageActions.clearMessage());
+  }, [dispatch]);
 
   const formik = useFormik({
     initialValues: {
@@ -32,6 +34,17 @@ const Register = () => {
       passwordRepeat: ""
     },
     onSubmit: async (values) => {
+      dispatch(registerUser(values))
+        .unwrap()
+        .then(() => {
+          setTimeout(() => {
+            navigate("/login");
+            window.location.reload();
+          }, 1000);
+        })
+        .catch(() => {
+
+        })
       
     }
   });
@@ -135,6 +148,7 @@ const Register = () => {
                         height: "45px"
                       }}
                     >
+                      {loading ? <CircularProgress/> : null}
                       Kayıt Ol
                     </Button>
                   </Stack>
@@ -150,6 +164,11 @@ const Register = () => {
           </Box>
         </Grid>
       </Grid>
+      <SnackbarMessage
+        open={message !== ""}
+        message={message}
+        severity={registerSuccess ? 'success' : 'error'}
+      />
     </>
   )
 }

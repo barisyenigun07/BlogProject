@@ -1,4 +1,5 @@
-import { Autocomplete, Box, Button, Grid, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, Chip, CircularProgress, Divider, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Tooltip, Typography } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import  {CKEditor}  from '@ckeditor/ckeditor5-react';
 import Editor from 'ckeditor5-custom-build/build/ckeditor';
 //import  SimpleUploadAdapter  from '@ckeditor/ckeditor5-upload/src/adapters/simpleuploadadapter';
@@ -10,6 +11,7 @@ import { AudioFile, VideoFile } from '@mui/icons-material';
 
 const CreatePost = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -18,6 +20,7 @@ const CreatePost = () => {
   const [postType, setPostType] = useState("");
   const [content, setContent] = useState(null);
 
+  
   const [tags, setTags] = useState([]);
 
   
@@ -34,7 +37,7 @@ const CreatePost = () => {
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
-      
+      setLoading(true);
       const formData = new FormData();
       
       formData.append("title", title);
@@ -43,9 +46,12 @@ const CreatePost = () => {
       formData.append("tag", tag);
       formData.append("postType", postType);
       formData.append("content", content);
+      createPost(formData);
       
-      await createPost(formData);
-      navigate("/");
+      setTimeout(() => {
+        navigate("/");
+        window.location.reload();
+      }, 1000)
     }
     catch(err) {
       alert(err);
@@ -54,6 +60,11 @@ const CreatePost = () => {
 
   return (
     <>
+    <Typography variant='h3'>
+      Gönderi Yayınla
+    </Typography>
+    <Divider></Divider>
+    <Box m={5}>
       <form onSubmit={handleSubmit}>
         <Stack spacing={2}>
           <TextField 
@@ -73,6 +84,7 @@ const CreatePost = () => {
           />
           <Button
             variant='contained'
+            color='warning'
             component="label"
           >
             Kapak Fotoğrafı Ekle
@@ -83,21 +95,32 @@ const CreatePost = () => {
               onChange={(e) => setCaptionPhoto(e.target.files[0])}
             />
           </Button>
-          <Autocomplete
-            disablePortal
-            options={tags}
-            sx={{width: 300}}
-            renderInput={(params) => <TextField {...params} label="Etiket"/>}
-            onChange={(e) => setTag(e.target.value)}
-          />
+          {captionPhoto ? <img src={URL.createObjectURL(captionPhoto)} alt='previewedImage' width={"950px"} height={"550px"}/> : null}
+          <Stack direction={"row"} spacing={2}>
+            <Autocomplete
+              disablePortal
+              options={tags}
+              sx={{width: 300}}
+              renderInput={(params) => <TextField {...params} label="Etiket"/>}
+              onChange={(e) => setTag(e.target.value)}
+            />
+            <Tooltip title="Etiket ekle">
+              <IconButton color='warning'>
+                <AddIcon/>
+              </IconButton>
+            </Tooltip>
+            {tag ? <Chip label={tag.tagName} onDelete={() => setTag(null)}/> : null}
+          </Stack>
           <InputLabel id="post-type-select-label">Gönderi Türü</InputLabel>
           <Select
             labelId='post-type-select-label'
+            id='post-type-select'
             label="Gönderi Türü"
             value={postType}
             onChange={(e) => setPostType(e.target.value)}
             fullWidth
           >
+            <MenuItem value="">-</MenuItem>
             <MenuItem value="ARTICLE">Makale</MenuItem>
             <MenuItem value="VIDEO">Video</MenuItem>
             <MenuItem value="PODCAST">Podcast</MenuItem>
@@ -157,6 +180,14 @@ const CreatePost = () => {
               null
           }
           </Box>
+          {content && postType === "VIDEO" ?
+            <video src={URL.createObjectURL(content)} controls/>
+            :
+            content && postType === "PODCAST" ?
+            <audio src={URL.createObjectURL(content)} controls/>
+            :
+            null
+          }
           {(content == null || content.length === 0) ? 
             <Button 
               disabled
@@ -168,14 +199,16 @@ const CreatePost = () => {
             : 
             <Button 
               variant='contained' 
-              color='primary' 
+              color='warning' 
               type='submit'
+              startIcon={loading ? <CircularProgress/> : null}
             >
               Yayınla
             </Button>
           }
         </Stack>
       </form>
+      </Box>
     </>
   )
 }

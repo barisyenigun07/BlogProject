@@ -13,10 +13,26 @@ const PostDetail = () => {
     }
 
     fetchPost();
-  }, []);
+  }, [id]);
   return (
     <>
-      
+      {post.postType === "ARTICLE" ? 
+        <div>
+
+        </div>
+      :
+      post.postType === "VIDEO" ? 
+        <div>
+
+        </div>
+      :
+      post.postType === "PODCAST" ?
+        <div>
+          
+        </div>
+      :
+      null
+      }
     </>
   )
 }

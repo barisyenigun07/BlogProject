@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage';
 import PostDetail from './pages/PostDetail';
 import CreatePost from './pages/CreatePost';
 import Navbar from './components/Navbar';
+import UserProfile from './pages/UserProfile';
 
  
 function App() {
@@ -17,8 +18,9 @@ function App() {
         <Route path='/register' element={<Register/>}/>
         <Route path='/login' element={<Login/>}/>
         <Route path='/' element={<HomePage/>}/>
-        <Route path='post/:id' element={<PostDetail/>}/>
-        <Route path='post/create' element={<CreatePost/>}/>
+        <Route path='/post/:id' element={<PostDetail/>}/>
+        <Route path='/post/create' element={<CreatePost/>}/>
+        <Route path='/user/:id' element={<UserProfile/>}/>
       </Routes>
     </BrowserRouter>
   );
