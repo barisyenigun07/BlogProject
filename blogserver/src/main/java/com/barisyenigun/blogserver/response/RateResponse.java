@@ -11,13 +11,13 @@ import lombok.ToString;
 public class RateResponse {
     private Long id;
     private double rateLevel;
-    private UserResponse userResponse;
+    private UserResponse user;
 
     public static RateResponse fromEntity(Rate rate){
         return RateResponse.builder()
                 .id(rate.getId())
                 .rateLevel(rate.getRateLevel())
-                .userResponse(UserResponse.fromEntity(rate.getUser()))
+                .user(UserResponse.fromEntity(rate.getUser()))
                 .build();
     }
 }

@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 import static jakarta.persistence.CascadeType.REMOVE;
 
@@ -37,9 +38,9 @@ public class Post {
     private LocalDate publishedDate = LocalDate.now();
     @Column(name = "modified_time")
     private LocalDate modifiedDate;
-    @ManyToOne
-    @JoinColumn(name = "tag_id")
-    private Tag tag;
+    @ManyToMany
+    @JoinTable(name = "post_tag", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private List<Tag> tags;
     @ManyToOne(cascade = REMOVE)
     @JoinColumn(name = "user_id")
     private User user;

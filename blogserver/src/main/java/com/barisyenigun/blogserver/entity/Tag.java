@@ -7,6 +7,8 @@ import lombok.Setter;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "tag")
 @Getter
@@ -21,4 +23,6 @@ public class Tag {
     private Long id;
     @Column(name = "tag_name",nullable = false,unique = true)
     private String tagName;
+    @ManyToMany(mappedBy = "tags")
+    private List<Post> posts;
 }

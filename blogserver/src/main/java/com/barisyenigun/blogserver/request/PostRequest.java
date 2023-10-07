@@ -7,6 +7,7 @@ import lombok.ToString;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @ToString
@@ -14,7 +15,7 @@ public class PostRequest {
     private String title;
     private String description;
     private MultipartFile captionPhoto;
-    private Tag tag;
     private String postType;
+    private List<Tag> tags;
     private LocalDate updatedDate = LocalDate.now();
 }

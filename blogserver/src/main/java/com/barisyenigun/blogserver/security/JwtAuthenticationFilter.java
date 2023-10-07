@@ -20,7 +20,6 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-
     private final JwtUserDetailsService userDetailsService;
 
     @Autowired
@@ -38,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }catch (IllegalArgumentException e){
             System.out.println("The process of getting JWT token is failed!");
         }catch (ExpiredJwtException e){
-            System.out.println("Bearer string not found!");
+            System.out.println("JWT token has expired!");
         }
 
         if (null != username && SecurityContextHolder.getContext().getAuthentication() == null){

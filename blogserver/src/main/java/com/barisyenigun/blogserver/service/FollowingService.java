@@ -7,11 +7,14 @@ import com.barisyenigun.blogserver.exception.ResourceNotFoundException;
 import com.barisyenigun.blogserver.exception.ResourceType;
 import com.barisyenigun.blogserver.repository.FollowingRepository;
 import com.barisyenigun.blogserver.repository.UserRepository;
+import com.barisyenigun.blogserver.response.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FollowingService {
@@ -43,14 +46,20 @@ public class FollowingService {
 
         Optional<Following> optionalFollowerFollowed = followingRepository.findByFollowerAndFollowed(unfollowerUser, unfollowedUser);
 
-        if (optionalFollowerFollowed.isPresent()) {
-            followingRepository.delete(optionalFollowerFollowed.get());
-        }
+        optionalFollowerFollowed.ifPresent(followingRepository::delete);
+
     }
 
-    public List<User> getAllFollowedUsersOfAUser(Long followerUserId){
-        return null;
-        //TODO: Logic düzenlenecek
+    public List<UserResponse> getAllFollowedUsersOfAUser(Long followerUserId){
+        User followerUser = userRepository.findById(followerUserId).orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
+        List<Following> allFollowingsByUser = followingRepository.findAllByFollower(followerUser);
+        List<User> allFollowedUsers = new ArrayList<>();
+
+        for (Following following : allFollowingsByUser) {
+            allFollowedUsers.add(following.getFollowed());
+        }
+
+        return allFollowedUsers.stream().map(user -> UserResponse.fromEntity(user)).collect(Collectors.toList());
     }
 
 }
