@@ -1,5 +1,6 @@
 package com.barisyenigun.blogserver.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,7 @@ public class Tag {
     private Long id;
     @Column(name = "tag_name",nullable = false,unique = true)
     private String tagName;
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Post> posts;
 }

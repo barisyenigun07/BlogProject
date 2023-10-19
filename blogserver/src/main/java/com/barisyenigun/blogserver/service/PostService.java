@@ -2,6 +2,7 @@ package com.barisyenigun.blogserver.service;
 
 
 import com.barisyenigun.blogserver.entity.Post;
+import com.barisyenigun.blogserver.entity.Tag;
 import com.barisyenigun.blogserver.entity.User;
 import com.barisyenigun.blogserver.exception.ResourceNotFoundException;
 import com.barisyenigun.blogserver.exception.ResourceType;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -106,6 +108,17 @@ public class PostService {
         Pageable pageable = PageRequest.of(page, size);
         Page<Post> postPage = postRepository.findAllByUserAndPostType(user, postType, pageable);
         return postPage.map(this::fromEntity);
+    }
+
+    public Page<PostResponse> getPostsByUser(Long userId, int page, int size) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
+        Pageable pageable = PageRequest.of(page, size, Sort.by("publishedDate").descending());
+        return null;
+    }
+
+    public List<PostResponse> getPostsByTag(Tag tag) {
+        List<Post> postsByTag = postRepository.findAll().stream().filter(post -> post.getTags().contains(tag)).toList();
+        return postsByTag.stream().map(this::fromEntity).collect(Collectors.toList());
     }
 
     public List<PostResponse> getPosts(){

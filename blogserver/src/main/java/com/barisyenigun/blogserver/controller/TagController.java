@@ -1,5 +1,6 @@
 package com.barisyenigun.blogserver.controller;
 
+import com.barisyenigun.blogserver.entity.Tag;
 import com.barisyenigun.blogserver.request.TagRequest;
 import com.barisyenigun.blogserver.response.TagResponse;
 import com.barisyenigun.blogserver.service.TagService;
@@ -19,8 +20,8 @@ public class TagController {
     }
 
     @PostMapping
-    public void postTag(@RequestBody TagRequest body){
-        tagService.createTag(body);
+    public Tag createTag(@RequestBody TagRequest body){
+        return tagService.createTag(body);
     }
 
     @GetMapping("/{id}")
