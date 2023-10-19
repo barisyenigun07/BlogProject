@@ -169,7 +169,7 @@ const Navbar = () => {
             </IconButton>
             <Box>
               <IconButton onClick={handleOpenUserMenu}>
-                {authUser?.profilePhotoLink == null ? <Avatar>{authUser?.username.charAt(0)}</Avatar> : <Avatar src={`http://localhost:8080/user/${authUser?.id}/profile-photo/download`}/>}
+                {authUser?.profilePhotoLink == null ? <Avatar/> : <Avatar src={`http://localhost:8080/user/${authUser?.id}/profile-photo/download`}/>}
               </IconButton>
               <Menu
                 sx={{mt: "45px"}}
@@ -187,10 +187,14 @@ const Navbar = () => {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                <MenuItem key={"profile"} onClick={(e) => navigate(`/user/${authUser?.id}`)}>
+                <MenuItem key={"profile"} onClick={(e) => {
+                  handleCloseUserMenu();
+                  navigate(`/user/${authUser?.id}`)
+                }}>
                   <Typography>Profil</Typography>
                 </MenuItem>
                 <MenuItem key={"logout"} onClick={(e) => {
+                  handleCloseUserMenu();
                   dispatch(authActions.logout());
                   navigate("/login");
                 }}>

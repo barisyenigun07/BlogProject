@@ -17,8 +17,8 @@ const PostCard = ({post}) => {
         />
         <CardMedia
             component={"img"}
-            height={"194"}
-            image={`http://localhost:8080/post/${post?.id}/caption_photo/download`}
+            height={"194px"}
+            image={`http://localhost:8080/post/${post?.id}/caption-photo/download`}
             alt='Caption Image'
         />
         <CardContent>

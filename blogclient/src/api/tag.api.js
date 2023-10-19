@@ -15,6 +15,7 @@ export const getTag = async (id) => {
 }
 
 export const createTag = async (data) => {
-    axios.post("/tag", data, {headers: {Authorization: `Bearer ${token}`}})
-         .catch(err => {throw err});
+    return await axios.post("/tag", data, {headers: {Authorization: `Bearer ${token}`, "Content-Type": "application/json"}})
+                    .then(res => res.data)
+                    .catch(err => {throw err});
 }
