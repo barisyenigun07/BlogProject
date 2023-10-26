@@ -10,10 +10,7 @@ import com.barisyenigun.blogserver.exception.UnauthorizedException;
 import com.barisyenigun.blogserver.repository.PostRepository;
 import com.barisyenigun.blogserver.repository.RateRepository;
 import com.barisyenigun.blogserver.repository.UserRepository;
-import com.barisyenigun.blogserver.request.ArticleRequest;
-import com.barisyenigun.blogserver.request.PodcastRequest;
 import com.barisyenigun.blogserver.request.PostRequest;
-import com.barisyenigun.blogserver.request.VideoRequest;
 import com.barisyenigun.blogserver.response.PostResponse;
 import com.barisyenigun.blogserver.response.TagResponse;
 import com.barisyenigun.blogserver.response.UserResponse;
@@ -59,23 +56,21 @@ public class PostService {
         }
 
         post.setPostType(postRequest.getPostType());
+        post.setModifiedDate(postRequest.getUpdatedDate());
         post.setTags(postRequest.getTags());
         post.setUser(user);
 
 
         switch (postRequest.getPostType()) {
             case "ARTICLE" -> {
-                ArticleRequest articleRequest = (ArticleRequest) postRequest;
-                post.setContent(articleRequest.getContent());
+                post.setContent(postRequest.getArticleContent());
             }
             case "VIDEO" -> {
-                VideoRequest videoRequest = (VideoRequest) postRequest;
-                String videoUrl = fileUtil.uploadFile(videoRequest.getContent(), "video/", "videos");
+                String videoUrl = fileUtil.uploadFile(postRequest.getMediaContent(), "video/", "videos");
                 post.setContent(videoUrl);
             }
             case "PODCAST" -> {
-                PodcastRequest podcastRequest = (PodcastRequest) postRequest;
-                String podcastUrl = fileUtil.uploadFile(podcastRequest.getContent(), "audio/", "podcasts");
+                String podcastUrl = fileUtil.uploadFile(postRequest.getMediaContent(), "audio/", "podcasts");
                 post.setContent(podcastUrl);
             }
             default -> System.out.println("Illegal post type!");
@@ -105,9 +100,9 @@ public class PostService {
 
     public Page<PostResponse> getPostsByUserAndPostType(Long userId, String postType, int page, int size){
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Post> postPage = postRepository.findAllByUserAndPostType(user, postType, pageable);
-        return postPage.map(this::fromEntity);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("publishedDate").descending());
+        Page<Post> postsByUserAndPostType = postRepository.findAllByUserAndPostType(user, postType, pageable);
+        return postsByUserAndPostType.map(this::fromEntity);
     }
 
     public Page<PostResponse> getPostsByUser(Long userId, int page, int size) {
@@ -150,19 +145,16 @@ public class PostService {
 
         switch (post.getPostType()) {
             case "ARTICLE" -> {
-                ArticleRequest articleRequest = (ArticleRequest) postRequest;
-                post.setContent(articleRequest.getContent());
+                post.setContent(postRequest.getArticleContent());
             }
             case "VIDEO" -> {
                 fileUtil.deleteFile("videos", post.getContent());
-                VideoRequest videoRequest = (VideoRequest) postRequest;
-                String videoUrl = fileUtil.uploadFile(videoRequest.getContent(), "video/", "videos");
+                String videoUrl = fileUtil.uploadFile(postRequest.getMediaContent(), "video/", "videos");
                 post.setContent(videoUrl);
             }
             case "PODCAST" -> {
                 fileUtil.deleteFile("podcasts", post.getContent());
-                PodcastRequest podcastRequest = (PodcastRequest) postRequest;
-                String podcastUrl = fileUtil.uploadFile(podcastRequest.getContent(), "audio/", "podcasts");
+                String podcastUrl = fileUtil.uploadFile(postRequest.getMediaContent(), "audio/", "podcasts");
                 post.setContent(podcastUrl);
             }
             default -> System.out.println("Illegal post type!");

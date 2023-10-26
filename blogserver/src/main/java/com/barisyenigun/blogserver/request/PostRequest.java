@@ -17,5 +17,7 @@ public class PostRequest {
     private MultipartFile captionPhoto;
     private String postType;
     private List<Tag> tags;
+    private String articleContent;
+    private MultipartFile mediaContent;
     private LocalDate updatedDate = LocalDate.now();
 }

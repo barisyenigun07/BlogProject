@@ -1,5 +1,7 @@
 package com.barisyenigun.blogserver.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +11,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
 
-import static jakarta.persistence.CascadeType.REMOVE;
+
 
 @Entity
 @Table(name = "post")
@@ -23,16 +25,19 @@ public class Post {
     @SequenceGenerator(name = "posts_id_seq",sequenceName = "posts_id_seq",allocationSize = 1)
     @Column(name = "id")
     private Long id;
-    @Column(name = "title",nullable = false)
+    @NotNull
+    @Column(name = "title")
     private String title;
-    @Column(name = "description",nullable = false)
+    @NotNull
+    @Column(name = "description")
     private String description;
     @Column(name = "caption_photo_link")
     private String captionPhotoLink;
-    @Lob
-    @Column(name = "content",nullable = false, columnDefinition = "TEXT")
+    @NotNull
+    @Column(name = "content", columnDefinition = "text")
     private String content;
-    @Column(name = "post_type",nullable = false)
+    @NotNull
+    @Column(name = "post_type")
     private String postType;
     @Column(name = "published_time")
     private LocalDate publishedDate = LocalDate.now();
@@ -41,7 +46,13 @@ public class Post {
     @ManyToMany
     @JoinTable(name = "post_tag", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private List<Tag> tags;
-    @ManyToOne(cascade = REMOVE)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private List<Comment> comments;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private List<Rate> rates;
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 }

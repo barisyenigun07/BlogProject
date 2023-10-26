@@ -1,6 +1,7 @@
 package com.barisyenigun.blogserver.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,8 @@ public class Tag {
     @SequenceGenerator(name = "tag_id_seq",sequenceName = "tag_id_seq",allocationSize = 1)
     @Column(name = "id")
     private Long id;
-    @Column(name = "tag_name",nullable = false,unique = true)
+    @NotNull
+    @Column(name = "tag_name", unique = true)
     private String tagName;
     @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
     @JsonIgnore

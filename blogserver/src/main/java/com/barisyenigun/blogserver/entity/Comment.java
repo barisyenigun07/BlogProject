@@ -1,5 +1,6 @@
 package com.barisyenigun.blogserver.entity;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,17 +16,17 @@ import jakarta.persistence.*;
 @AllArgsConstructor
 public class Comment {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "post_comment_id_seq")
-    @SequenceGenerator(name = "post_comment_id_seq",sequenceName = "post_comment_id_seq",allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "post_comment_id_seq")
+    @SequenceGenerator(name = "post_comment_id_seq", sequenceName = "post_comment_id_seq", allocationSize = 1)
     @Column(name = "id")
     private Long id;
-    @Lob
-    @Column(name = "content",nullable = false,columnDefinition = "TEXT")
+    @NotNull
+    @Column(name = "content", columnDefinition = "TEXT")
     private String content;
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 }
