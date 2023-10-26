@@ -9,9 +9,15 @@ export const createPost = async (formData) => {
 }
 
 export const getPost = async (id) => {
-    return await axios.get(`/post/${id}`, {headers: {Authorization: `Bearer ${token}`}})
+    return await axios.get(`/post/${id}`)
                 .then(res => res.data)
                 .catch(err => {throw err});
+}
+
+export const getPosts = async () => {
+    return await axios.get("/post")
+                        .then(res => res.data)
+                        .catch(err => {throw err});
 }
 
 export const updatePost = async (id, formData) => {

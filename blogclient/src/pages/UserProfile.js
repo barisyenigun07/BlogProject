@@ -1,7 +1,7 @@
 import { Avatar, Box, Button, Stack, Tab, Tabs, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { getUser } from '../api/user.api';
 
 const UserProfile = () => {
@@ -16,16 +16,17 @@ const UserProfile = () => {
       const userData = await getUser(id);
       setUser(userData);
     }
-
+    
     fetchUser();
   }, []);  
   
   return (
     <>
       <Box sx={{
-        position: "relative"
+        position: "relative",
+        margin: -1,
       }}>
-        {user.captionPhotoLink != null ? (
+        {user.captionPhotoLink !== "" ? (
           <Box
             component={"img"}
             alt='Caption'
@@ -40,7 +41,6 @@ const UserProfile = () => {
               height: "400px",
               width: 1,
               backgroundColor: "#c5cdd6",
-              margin: 0
             }}
             
           />
@@ -50,7 +50,17 @@ const UserProfile = () => {
           top={0}
           left={0}
         >
-          <Avatar sx={{width: "150px", height: "150px", marginTop: "325px", marginLeft: "120px"}}/>
+          {(user.profilePhotoLink !== "") ? 
+            <Avatar 
+              src={`http://localhost:8080/user/${user.id}/profile-photo/download`} 
+              alt='Profile' 
+              sx={{width: "150px", height: "150px", marginTop: "325px", marginLeft: "120px"}}
+            /> 
+            : 
+            <Avatar 
+              sx={{width: "150px", height: "150px", marginTop: "325px", marginLeft: "120px"}}
+            />
+          }
         </Box>
         <Box 
           sx={{backgroundColor: "#2E3B55"}}
@@ -82,20 +92,23 @@ const UserProfile = () => {
                 <Typography sx={{color: "white", "&:hover": {color: "#FFC107"}}}>218 Takip Edilen</Typography>
               </Stack>
             </Box>
-            <Box>
+            <Box sx={{marginTop: "5px"}}>
               {(user.id === authUser.id) ? 
                 <Button 
                   variant='contained' 
                   color='warning' 
-                  sx={{marginTop: "5px", borderRadius: "20px"}}
+                  sx={{borderRadius: "20px"}}
                 >
-                  Profili Düzenle
+                  <Link to={"/"} style={{textDecoration: "none", color: "white"}}>Profili Düzenle</Link>
                 </Button> 
                 : 
                 <Button 
                   color='warning' 
                   variant='contained' 
-                  sx={{marginTop: "5px", borderRadius: "20px"}}
+                  sx={{borderRadius: "20px"}}
+                  onClick={() => {
+                    
+                  }}
                 >
                   Takip Et
                 </Button>

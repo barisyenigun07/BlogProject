@@ -58,6 +58,7 @@ const Register = () => {
             position: "relative",
             display: "flex",
             justifyContent: "center",
+            margin: -1,
             height: "101vh"
           }}
         >

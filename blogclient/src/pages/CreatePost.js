@@ -22,7 +22,8 @@ const CreatePost = () => {
   const [captionPhoto, setCaptionPhoto] = useState(null);
   const [tags, setTags] = useState([]);
   const [postType, setPostType] = useState("");
-  const [content, setContent] = useState(null);
+  const [articleContent, setArticleContent] = useState("");
+  const [mediaContent, setMediaContent] = useState(null);
 
   const [captionPhotoPreview, setCaptionPhotoPreview] = useState(null);
   const [fileContentPreview, setFileContentPreview] = useState(null);
@@ -34,7 +35,7 @@ const CreatePost = () => {
 
   const handleDeleteFileContent = () => {
     setFileContentPreview(null);
-    setContent(null);
+    setMediaContent(null);
   }
   
   const [allTags, setAllTags] = useState([]);
@@ -76,10 +77,18 @@ const CreatePost = () => {
       formData.append("title", title);
       formData.append("description", description);
       formData.append("captionPhoto", captionPhoto);
-      formData.append("tags", tags);
+      formData.append("tags", tags.map(tag => tag.id));
       formData.append("postType", postType);
-      formData.append("content", content);
-      createPost(formData);
+      
+      if (postType === "ARTICLE") {
+        formData.append("articleContent", articleContent);
+      }
+
+      else if (postType === "VIDEO" || postType === "PODCAST") {
+        formData.append("mediaContent", mediaContent);
+      }
+      
+      await createPost(formData);
       
       setTimeout(() => {
         navigate("/");
@@ -93,230 +102,230 @@ const CreatePost = () => {
 
   return (
     <>
-    <Typography variant='h3'>
-      Gönderi Yayınla
-    </Typography>
-    <Divider></Divider>
-    <Box m={5}>
-      <form onSubmit={handleSubmit}>
-        <Stack spacing={2}>
-          <TextField 
-            type='text' 
-            variant='standard' 
-            label="Başlık" 
-            fullWidth 
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <TextField 
-            type='text' 
-            variant='outlined' 
-            label="Açıklama"
-            multiline 
-            fullWidth 
-            onChange={(e) => setDescription(e.target.value)}
-          />
-          <Button
-            variant='contained'
-            color='warning'
-            component="label"
-          >
-            Kapak Fotoğrafı Ekle
-            <input
-              type='file'
-              hidden
-              accept='image/*'
-              onChange={(e) => {
-                setCaptionPhotoPreview(URL.createObjectURL(e.target.files[0]));
-                setCaptionPhoto(e.target.files[0]);
-              }}
+      <Typography variant='h3'>
+        Gönderi Yayınla
+      </Typography>
+      <Divider></Divider>
+      <Box m={5}>
+        <form onSubmit={handleSubmit}>
+          <Stack spacing={2}>
+            <TextField 
+              type='text' 
+              variant='standard' 
+              label="Başlık" 
+              fullWidth 
+              onChange={(e) => setTitle(e.target.value)}
             />
-          </Button>
-          <Box sx={{display: "flex", justifyContent: "center"}}>
-            {captionPhotoPreview ? 
-              <Stack spacing={2}>
-                <Box sx={{display: "flex", justifyContent: "center"}}>
-                  <img src={captionPhotoPreview} alt='previewedImage' width={"950px"} height={"550px"}/>
-                </Box>
-                <Box sx={{display: "flex", justifyContent: "center"}}>
-                  <Button 
-                    variant='contained' 
-                    color='error'
-                    startIcon={<CloseIcon/>} 
-                    onClick={() => {
-                      handleDeleteCaptionPhoto();
-                    }}
-                  >
-                    Kapak Fotoğrafını Kaldır
-                  </Button>
-                </Box>
-              </Stack> 
-              : null
-              }
-          </Box>
-          <Stack direction={"row"} spacing={2}>
-            <Autocomplete
-              disablePortal
-              multiple
-              placeholder='Etiket ara...'
-              fullWidth
-              options={allTags}
-              getOptionLabel={(tag) => tag.tagName}
-              renderInput={(params) => <TextField {...params} label="Etiket"/>}
-              onChange={(e, values) => {
-                setTags(values);
-              }}
+            <TextField 
+              type='text' 
+              variant='outlined' 
+              label="Açıklama"
+              multiline 
+              fullWidth 
+              onChange={(e) => setDescription(e.target.value)}
             />
-            <Tooltip title="Yeni etiket ekle" onClick={handleOpenTagFormDialog}>
-              <IconButton color='warning'>
-                <AddIcon/>
-              </IconButton>
-            </Tooltip>
-            <TagFormDialog
-              open={isTagFormDialogOpen}
-              onClose={handleCloseTagFormDialog}
-              onTagAdd={handleAddTag}
-            />
-          </Stack>
-          <InputLabel id="post-type-select-label">Gönderi Türü</InputLabel>
-          <Select
-            labelId='post-type-select-label'
-            id='post-type-select'
-            value={postType}
-            onChange={(e) => setPostType(e.target.value)}
-            fullWidth
-          >
-            <MenuItem value="">-</MenuItem>
-            <MenuItem value="ARTICLE">Makale</MenuItem>
-            <MenuItem value="VIDEO">Video</MenuItem>
-            <MenuItem value="PODCAST">Podcast</MenuItem>
-          </Select>
-          <Box>
-          {
-            (postType === "ARTICLE") ? 
-              
-              <CKEditor 
-              editor={ Editor }
-              data={content}
-              onReady={
-                (editor) => {
-                  console.log("Editor is ready to use!",editor);
-                }
-              }
-              onChange={(event, editor) => {
-                const data = editor.getData();
-                setContent(data);
-              }}
-              
-              />
-              
-              :
-              (postType === "VIDEO") ?
-              <Button
-                variant='contained'
-                component="label"
-                color='error'
-                fullWidth
-                startIcon={<VideocamIcon/>}
-              >
-                Video Ekle
-                <input
-                  type='file'
-                  hidden
-                  accept='video/*'
-                  onChange={(e) => {
-                    setFileContentPreview(URL.createObjectURL(e.target.files[0]));
-                    setContent(e.target.files[0])
-                  }}
-                />
-              </Button>
-              :
-              (postType === "PODCAST") ?
-              <Button
-                variant='contained'
-                component="label"
-                color='error'
-                fullWidth
-                startIcon={<HeadphonesIcon/>}
-              >
-                Podcast Ekle
-                <input
-                  type='file'
-                  hidden
-                  accept='audio/*'
-                  onChange={(e) => {
-                    setFileContentPreview(URL.createObjectURL(e.target.files[0]));
-                    setContent(e.target.files[0])
-                  }}
-                />
-              </Button>
-              :
-              null
-          }
-          </Box>
-          <Box>
-            {fileContentPreview && postType === "VIDEO" ? 
-              <Stack spacing={2}>
-                <Box sx={{display: "flex", justifyContent: "center"}}>
-                  <video src={fileContentPreview} controls width={"950px"} height={"550px"}/>
-                </Box>
-                <Box sx={{display: "flex", justifyContent: "center"}}>
-                  <Button 
-                    variant='contained' 
-                    color='error'
-                    startIcon={<CloseIcon/>}
-                    onClick={() => {
-                      handleDeleteFileContent();
-                  }}>
-                    Videoyu Kaldır
-                  </Button>
-                </Box>
-              </Stack>
-              :
-              fileContentPreview && postType === "PODCAST" ?
-              <Stack spacing={2}>
-                <Box sx={{display: "flex", justifyContent: "center"}}>
-                  <audio src={fileContentPreview} controls/>
-                </Box>
-                <Box sx={{display: "flex", justifyContent: "center"}}>
-                  <Button
-                    variant='contained'
-                    color='error'
-                    startIcon={<CloseIcon/>}
-                    onClick={() => {
-                      handleDeleteFileContent();
-                    }}
-                  >
-                    Podcasti Kaldır
-                  </Button>
-                </Box>
-              </Stack>
-              :
-              null
-            }
-          </Box>
-          <Box sx={{display: "flex", justifyContent: "center"}}>
-          {(content == null || content.length === 0) ? 
-            <Button 
-              disabled
+            <Button
               variant='contained'
-              color='primary'
+              color='warning'
+              component="label"
             >
-              Yayınla
-            </Button> 
-            : 
-            <Button 
-              variant='contained' 
-              color='warning' 
-              type='submit'
-              startIcon={loading ? <CircularProgress sx={{color: "white"}}/> : null}
-            >
-              Yayınla
+              Kapak Fotoğrafı Ekle
+              <input
+                type='file'
+                hidden
+                accept='image/*'
+                onChange={(e) => {
+                  setCaptionPhotoPreview(URL.createObjectURL(e.target.files[0]));
+                  setCaptionPhoto(e.target.files[0]);
+                }}
+              />
             </Button>
-          }
-          </Box>
-        </Stack>
-      </form>
-      </Box>
+            <Box sx={{display: "flex", justifyContent: "center"}}>
+              {captionPhotoPreview ? 
+                <Stack spacing={2}>
+                  <Box sx={{display: "flex", justifyContent: "center"}}>
+                    <img src={captionPhotoPreview} alt='previewedImage' width={"950px"} height={"550px"}/>
+                  </Box>
+                  <Box sx={{display: "flex", justifyContent: "center"}}>
+                    <Button 
+                      variant='contained' 
+                      color='error'
+                      startIcon={<CloseIcon/>} 
+                      onClick={() => {
+                        handleDeleteCaptionPhoto();
+                      }}
+                    >
+                      Kapak Fotoğrafını Kaldır
+                    </Button>
+                  </Box>
+                </Stack> 
+                : null
+                }
+            </Box>
+            <Stack direction={"row"} spacing={2}>
+              <Autocomplete
+                disablePortal
+                multiple
+                placeholder='Etiket ara...'
+                fullWidth
+                options={allTags}
+                getOptionLabel={(tag) => tag.tagName}
+                renderInput={(params) => <TextField {...params} label="Etiket"/>}
+                onChange={(e, values) => {
+                  setTags(values);
+                }}
+              />
+              <Tooltip title="Yeni etiket ekle" onClick={handleOpenTagFormDialog}>
+                <IconButton color='warning'>
+                  <AddIcon/>
+                </IconButton>
+              </Tooltip>
+              <TagFormDialog
+                open={isTagFormDialogOpen}
+                onClose={handleCloseTagFormDialog}
+                onTagAdd={handleAddTag}
+              />
+            </Stack>
+            <InputLabel id="post-type-select-label">Gönderi Türü</InputLabel>
+            <Select
+              labelId='post-type-select-label'
+              id='post-type-select'
+              value={postType}
+              onChange={(e) => setPostType(e.target.value)}
+              fullWidth
+            >
+              <MenuItem value="">-</MenuItem>
+              <MenuItem value="ARTICLE">Makale</MenuItem>
+              <MenuItem value="VIDEO">Video</MenuItem>
+              <MenuItem value="PODCAST">Podcast</MenuItem>
+            </Select>
+            <Box>
+            {
+              (postType === "ARTICLE") ? 
+                
+                <CKEditor 
+                editor={ Editor }
+                data={articleContent}
+                onReady={
+                  (editor) => {
+                    console.log("Editor is ready to use!",editor);
+                  }
+                }
+                onChange={(event, editor) => {
+                  const data = editor.getData();
+                  setArticleContent(data);
+                }}
+                
+                />
+                
+                :
+                (postType === "VIDEO") ?
+                <Button
+                  variant='contained'
+                  component="label"
+                  color='error'
+                  fullWidth
+                  startIcon={<VideocamIcon/>}
+                >
+                  Video Ekle
+                  <input
+                    type='file'
+                    hidden
+                    accept='video/*'
+                    onChange={(e) => {
+                      setFileContentPreview(URL.createObjectURL(e.target.files[0]));
+                      setMediaContent(e.target.files[0])
+                    }}
+                  />
+                </Button>
+                :
+                (postType === "PODCAST") ?
+                <Button
+                  variant='contained'
+                  component="label"
+                  color='error'
+                  fullWidth
+                  startIcon={<HeadphonesIcon/>}
+                >
+                  Podcast Ekle
+                  <input
+                    type='file'
+                    hidden
+                    accept='audio/*'
+                    onChange={(e) => {
+                      setFileContentPreview(URL.createObjectURL(e.target.files[0]));
+                      setMediaContent(e.target.files[0])
+                    }}
+                  />
+                </Button>
+                :
+                null
+            }
+            </Box>
+            <Box>
+              {fileContentPreview && postType === "VIDEO" ? 
+                <Stack spacing={2}>
+                  <Box sx={{display: "flex", justifyContent: "center"}}>
+                    <video src={fileContentPreview} controls width={"950px"} height={"550px"}/>
+                  </Box>
+                  <Box sx={{display: "flex", justifyContent: "center"}}>
+                    <Button 
+                      variant='contained' 
+                      color='error'
+                      startIcon={<CloseIcon/>}
+                      onClick={() => {
+                        handleDeleteFileContent();
+                    }}>
+                      Videoyu Kaldır
+                    </Button>
+                  </Box>
+                </Stack>
+                :
+                fileContentPreview && postType === "PODCAST" ?
+                <Stack spacing={2}>
+                  <Box sx={{display: "flex", justifyContent: "center"}}>
+                    <audio src={fileContentPreview} controls/>
+                  </Box>
+                  <Box sx={{display: "flex", justifyContent: "center"}}>
+                    <Button
+                      variant='contained'
+                      color='error'
+                      startIcon={<CloseIcon/>}
+                      onClick={() => {
+                        handleDeleteFileContent();
+                      }}
+                    >
+                      Podcasti Kaldır
+                    </Button>
+                  </Box>
+                </Stack>
+                :
+                null
+              }
+            </Box>
+            <Box sx={{display: "flex", justifyContent: "center"}}>
+            {(mediaContent == null && articleContent.length === 0) ? 
+              <Button 
+                disabled
+                variant='contained'
+                color='primary'
+              >
+                Yayınla
+              </Button> 
+              : 
+              <Button 
+                variant='contained' 
+                color='warning' 
+                type='submit'
+                startIcon={loading ? <CircularProgress sx={{color: "white"}}/> : null}
+              >
+                Yayınla
+              </Button>
+            }
+            </Box>
+          </Stack>
+        </form>
+        </Box>
     </>
   )
 }

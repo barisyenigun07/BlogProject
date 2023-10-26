@@ -60,6 +60,7 @@ const Login = () => {
             display: "flex",
             justifyContent: "center",
             minHeight: "100vh",
+            margin: -1,
             height: "100%"
           }}
         >
