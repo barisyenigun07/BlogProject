@@ -23,6 +23,11 @@ public class CommentController {
         commentService.createComment(body, postId);
     }
 
+    @PostMapping("/{commentId}/reply")
+    public void replyComment(@PathVariable Long commentId, @RequestBody CommentRequest body) {
+        commentService.replyComment(commentId, body);
+    }
+
     @GetMapping("/{id}")
     public CommentResponse getComment(@PathVariable Long id){
         return commentService.getComment(id);

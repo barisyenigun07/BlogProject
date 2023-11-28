@@ -11,8 +11,10 @@ import com.barisyenigun.blogserver.repository.RateRepository;
 import com.barisyenigun.blogserver.request.RateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class RateService {
     private final RateRepository rateRepository;
     private final PostRepository postRepository;

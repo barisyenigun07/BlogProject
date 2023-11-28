@@ -2,8 +2,7 @@ package com.barisyenigun.blogserver.util;
 
 
 import com.barisyenigun.blogserver.bucket.BucketName;
-import com.barisyenigun.blogserver.exception.FileUploadException;
-import com.barisyenigun.blogserver.exception.ImproperFileTypeException;
+import com.barisyenigun.blogserver.exception.FileException;
 import com.barisyenigun.blogserver.service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,8 +23,7 @@ public class FileUtil {
         this.storageService = storageService;
     }
 
-
-    private Map<String, String> extractMetadata(MultipartFile file){
+    private Map<String, String> extractMetadata(MultipartFile file) {
         Map<String, String> metadata = new HashMap<>();
         metadata.put("Content-Type", file.getContentType());
         metadata.put("Content-Length", String.valueOf(file.getSize()));
@@ -42,7 +40,7 @@ public class FileUtil {
         }
 
         if (!mimeType.startsWith(prefix)){
-            throw new ImproperFileTypeException();
+            throw new FileException("File is in improper type!");
         }
     }
 
@@ -57,7 +55,7 @@ public class FileUtil {
             return filename;
         }
         catch (IOException e){
-            throw new FileUploadException();
+            throw new FileException("File upload failed!");
         }
     }
 

@@ -8,6 +8,9 @@ import lombok.Setter;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Entity
 @Table(name = "comment")
 @Getter
@@ -23,10 +26,17 @@ public class Comment {
     @NotNull
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
+    @Column(name = "published_date")
+    private LocalDate publishedDate = LocalDate.now();
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    @ManyToOne
+    @JoinColumn(name = "parent_comment_id")
+    private Comment parentComment;
+    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.REMOVE)
+    private List<Comment> replies;
 }

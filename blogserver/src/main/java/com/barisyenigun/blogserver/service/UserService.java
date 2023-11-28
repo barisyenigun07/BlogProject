@@ -8,14 +8,17 @@ import com.barisyenigun.blogserver.request.UpdateUserRequest;
 import com.barisyenigun.blogserver.response.UserResponse;
 import com.barisyenigun.blogserver.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 @Service
+@Transactional
 public class UserService {
     private final UserRepository userRepository;
     private final FileUtil fileUtil;

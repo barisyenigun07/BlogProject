@@ -5,6 +5,7 @@ import com.barisyenigun.blogserver.request.PostRequest;
 import com.barisyenigun.blogserver.response.PostResponse;
 import com.barisyenigun.blogserver.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +25,7 @@ public class PostController {
         postService.createPost(postRequest);
     }
 
-    /*@PostMapping("/upload-article-image")
+    /*@PostMapping("/article/image/upload")
     public void uploadArticleImage(@RequestParam("file") MultipartFile file){
         postService.uploadArticleImage(file);
     }*/
@@ -49,13 +50,18 @@ public class PostController {
         return postService.getFileContent(id);
     }
 
-    /*@GetMapping
-    public Page<PostResponse> getPostsByUserAndPostType(@RequestParam("user_id") Long userId,
-                                                        @RequestParam("post_type") PostType postType,
+    @GetMapping("/user/{userId}")
+    public Page<PostResponse> getPostsByUserAndPostType(@PathVariable Long userId,
+                                                        @RequestParam("post_type") String postType,
                                                         @RequestParam("page") int page,
                                                         @RequestParam("size") int size){
         return postService.getPostsByUserAndPostType(userId, postType, page, size);
-    }*/
+    }
+
+    @GetMapping("/tag")
+    public List<PostResponse> getPostsByTagName(@RequestParam("tag_name") String tagName) {
+        return postService.getPostsByTagName(tagName);
+    }
 
     @PutMapping("/{id}")
     public void updatePost(@PathVariable Long id, @ModelAttribute PostRequest postRequest){

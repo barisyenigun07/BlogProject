@@ -39,9 +39,9 @@ public class Post {
     @NotNull
     @Column(name = "post_type")
     private String postType;
-    @Column(name = "published_time")
+    @Column(name = "published_date")
     private LocalDate publishedDate = LocalDate.now();
-    @Column(name = "modified_time")
+    @Column(name = "modified_date")
     private LocalDate modifiedDate;
     @ManyToMany
     @JoinTable(name = "post_tag", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))

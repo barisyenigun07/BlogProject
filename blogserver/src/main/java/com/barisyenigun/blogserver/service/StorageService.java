@@ -4,8 +4,7 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
-import com.barisyenigun.blogserver.exception.FileDownloadException;
-import com.barisyenigun.blogserver.exception.FileUploadException;
+import com.barisyenigun.blogserver.exception.FileException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,23 +15,26 @@ import java.util.Optional;
 @Service
 public class StorageService {
     private final AmazonS3 s3;
+
+
     @Autowired
     public StorageService(AmazonS3 s3){
         this.s3 = s3;
     }
 
-    public void upload(String path, String fileName, Optional<Map<String,String>> optionalMetadata, InputStream inputStream){
+    public void upload(String path, String fileName, Optional<Map<String, String>> optionalMetadata, InputStream inputStream){
         ObjectMetadata objectMetadata = new ObjectMetadata();
         optionalMetadata.ifPresent(map -> {
-            if (!map.isEmpty()){
+            if (!map.isEmpty()) {
                 map.forEach(objectMetadata::addUserMetadata);
             }
         });
+
         try {
-            s3.putObject(path,fileName,inputStream,objectMetadata);
+            s3.putObject(path, fileName, inputStream, objectMetadata);
         }
-        catch (AmazonServiceException e){
-            throw new FileUploadException();
+        catch (AmazonServiceException e) {
+            throw new FileException("File upload failed!");
         }
     }
 
@@ -43,7 +45,7 @@ public class StorageService {
             return IOUtils.toByteArray(objectContent);
         }
         catch (AmazonServiceException | IOException e){
-            throw new FileDownloadException();
+            throw new FileException("File download failed!");
         }
     }
     public void delete(String bucketName, String key){

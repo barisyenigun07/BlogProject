@@ -6,6 +6,7 @@ import com.barisyenigun.blogserver.request.UpdateUserRequest;
 import com.barisyenigun.blogserver.response.UserResponse;
 import com.barisyenigun.blogserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

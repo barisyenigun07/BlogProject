@@ -12,11 +12,13 @@ import com.barisyenigun.blogserver.request.CommentRequest;
 import com.barisyenigun.blogserver.response.CommentResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class CommentService {
     private final CommentRepository commentRepository;
     private final UserService userService;
@@ -37,6 +39,17 @@ public class CommentService {
         comment.setPost(post);
         comment.setUser(user);
         commentRepository.save(comment);
+    }
+
+    public void replyComment(Long commentId, CommentRequest body) {
+        Comment parentComment = commentRepository.findById(commentId).orElseThrow(() -> new ResourceNotFoundException(ResourceType.COMMENT));
+        User user = userService.getAuthenticatedUser().orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
+        Comment reply = new Comment();
+        reply.setContent(body.getContent());
+        reply.setParentComment(parentComment);
+        reply.setPost(parentComment.getPost());
+        reply.setUser(user);
+        commentRepository.save(reply);
     }
 
     public CommentResponse getComment(Long id){
