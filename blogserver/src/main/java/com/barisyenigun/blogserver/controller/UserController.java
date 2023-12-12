@@ -1,12 +1,9 @@
 package com.barisyenigun.blogserver.controller;
 
-import com.barisyenigun.blogserver.exception.ResourceNotFoundException;
-import com.barisyenigun.blogserver.exception.ResourceType;
 import com.barisyenigun.blogserver.request.UpdateUserRequest;
 import com.barisyenigun.blogserver.response.UserResponse;
 import com.barisyenigun.blogserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,10 +16,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/auth")
-    public UserResponse getAuthUser() {
-        return UserResponse.fromEntity(userService.getAuthenticatedUser().orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER)));
-    }
 
     @GetMapping("/{id}")
     public UserResponse getUser(@PathVariable Long id){

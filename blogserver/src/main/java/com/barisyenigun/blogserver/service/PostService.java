@@ -39,34 +39,34 @@ public class PostService {
         this.fileUtil = fileUtil;
     }
 
-    public void createPost(PostRequest postRequest) {
+    public void createPost(PostRequest body) {
         User user = userService.getAuthenticatedUser().orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
 
         Post post = new Post();
-        post.setTitle(postRequest.getTitle());
-        post.setDescription(postRequest.getDescription());
+        post.setTitle(body.getTitle());
+        post.setDescription(body.getDescription());
 
-        if (postRequest.getCaptionPhoto() != null) {
-            String captionPhotoUrl = fileUtil.uploadFile(postRequest.getCaptionPhoto(), "image/", "post_caption_photos");
+        if (body.getCaptionPhoto() != null) {
+            String captionPhotoUrl = fileUtil.uploadFile(body.getCaptionPhoto(), "image/", "post_caption_photos");
             post.setCaptionPhotoLink(captionPhotoUrl);
         }
 
-        post.setPostType(postRequest.getPostType());
-        post.setModifiedDate(postRequest.getUpdatedDate());
-        post.setTags(postRequest.getTags());
+        post.setPostType(body.getPostType());
+        post.setModifiedDate(body.getUpdatedDate());
+        post.setTags(body.getTags());
         post.setUser(user);
 
 
-        switch (postRequest.getPostType()) {
+        switch (body.getPostType()) {
             case "ARTICLE" -> {
-                post.setContent(postRequest.getArticleContent());
+                post.setContent(body.getArticleContent());
             }
             case "VIDEO" -> {
-                String videoUrl = fileUtil.uploadFile(postRequest.getMediaContent(), "video/", "videos");
+                String videoUrl = fileUtil.uploadFile(body.getMediaContent(), "video/", "videos");
                 post.setContent(videoUrl);
             }
             case "PODCAST" -> {
-                String podcastUrl = fileUtil.uploadFile(postRequest.getMediaContent(), "audio/", "podcasts");
+                String podcastUrl = fileUtil.uploadFile(body.getMediaContent(), "audio/", "podcasts");
                 post.setContent(podcastUrl);
             }
             default -> System.out.println("Illegal post type!");

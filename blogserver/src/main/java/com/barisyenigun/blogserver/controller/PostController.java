@@ -21,8 +21,8 @@ public class PostController {
     }
 
     @PostMapping
-    public void createPost(@ModelAttribute PostRequest postRequest){
-        postService.createPost(postRequest);
+    public void createPost(@ModelAttribute PostRequest body){
+        postService.createPost(body);
     }
 
     /*@PostMapping("/article/image/upload")

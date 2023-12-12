@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.Normalizer;
 import java.util.*;
 
 @Service
@@ -44,11 +45,16 @@ public class FileUtil {
         }
     }
 
+    private String normalizeFilename(String filename) {
+        String normalizedFilename = Normalizer.normalize(filename, Normalizer.Form.NFD);
+        return normalizedFilename.replaceAll("[^\\p{ASCII}]", "");
+    }
+
     public String uploadFile(MultipartFile file, String prefix, String destination){
         isProperType(file, prefix);
         Map<String, String> metadata = extractMetadata(file);
         String path = String.format("%s/%s", BucketName.STORAGE_BUCKET.getBucketName(), destination);
-        String filename = String.format("%s-%s", UUID.randomUUID(), file.getOriginalFilename());
+        String filename = String.format("%s-%s", UUID.randomUUID(), normalizeFilename(file.getOriginalFilename()));
 
         try {
             storageService.upload(path, filename, Optional.of(metadata), file.getInputStream());
