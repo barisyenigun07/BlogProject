@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 
@@ -40,9 +41,9 @@ public class Post {
     @Column(name = "post_type")
     private String postType;
     @Column(name = "published_date")
-    private LocalDate publishedDate = LocalDate.now();
+    private ZonedDateTime publishedDate = ZonedDateTime.now(ZoneId.systemDefault());
     @Column(name = "modified_date")
-    private LocalDate modifiedDate;
+    private ZonedDateTime modifiedDate;
     @ManyToMany
     @JoinTable(name = "post_tag", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private List<Tag> tags;

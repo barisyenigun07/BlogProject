@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,8 +22,8 @@ public class PostResponse {
     private String captionPhotoLink;
     private String content;
     private String postType;
-    private LocalDate publishedDate;
-    private LocalDate modifiedDate;
+    private ZonedDateTime publishedDate;
+    private ZonedDateTime modifiedDate;
     private double averageRate;
     private List<TagResponse> tags;
     private List<CommentResponse> comments;

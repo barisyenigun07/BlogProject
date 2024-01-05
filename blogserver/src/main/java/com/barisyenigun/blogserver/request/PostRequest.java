@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.ToString;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Data
@@ -19,5 +21,5 @@ public class PostRequest {
     private List<Tag> tags;
     private String articleContent;
     private MultipartFile mediaContent;
-    private LocalDate updatedDate = LocalDate.now();
+    private ZonedDateTime updatedDate = ZonedDateTime.now(ZoneId.systemDefault());
 }
