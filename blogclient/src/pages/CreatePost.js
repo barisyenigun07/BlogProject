@@ -25,6 +25,7 @@ const CreatePost = () => {
   const [articleContent, setArticleContent] = useState("");
   const [mediaContent, setMediaContent] = useState(null);
 
+  const [allTags, setAllTags] = useState([]);
   const [captionPhotoPreview, setCaptionPhotoPreview] = useState(null);
   const [fileContentPreview, setFileContentPreview] = useState(null);
 
@@ -37,8 +38,6 @@ const CreatePost = () => {
     setFileContentPreview(null);
     setMediaContent(null);
   }
-  
-  const [allTags, setAllTags] = useState([]);
 
   const handleOpenTagFormDialog = () => {
     setTagFormDialogOpen(true);
@@ -58,7 +57,7 @@ const CreatePost = () => {
       
     }
   }
-
+  
   useEffect(() => {
     const fetchAllTags = async () => {
       const allTags = await getTags();
@@ -97,6 +96,7 @@ const CreatePost = () => {
     }
     catch(err) {
       setLoading(false);
+      alert(err);
     }
   }
 
@@ -105,7 +105,7 @@ const CreatePost = () => {
       <Typography variant='h3'>
         Gönderi Yayınla
       </Typography>
-      <Divider></Divider>
+      <Divider/>
       <Box m={5}>
         <form onSubmit={handleSubmit}>
           <Stack spacing={2}>
@@ -135,8 +135,14 @@ const CreatePost = () => {
                 hidden
                 accept='image/*'
                 onChange={(e) => {
-                  setCaptionPhotoPreview(URL.createObjectURL(e.target.files[0]));
-                  setCaptionPhoto(e.target.files[0]);
+                  if (e.target.files.length > 0) {
+                    setCaptionPhotoPreview(URL.createObjectURL(e.target.files[0]));
+                    setCaptionPhoto(e.target.files[0]);
+                  }
+                  else {
+                    setCaptionPhotoPreview(null);
+                    setCaptionPhoto(null);
+                  }
                 }}
               />
             </Button>
@@ -204,18 +210,17 @@ const CreatePost = () => {
               (postType === "ARTICLE") ? 
                 
                 <CKEditor 
-                editor={ Editor }
-                data={articleContent}
-                onReady={
-                  (editor) => {
-                    console.log("Editor is ready to use!",editor);
+                  editor={ Editor }
+                  data={articleContent}
+                  onReady={
+                    (editor) => {
+                      console.log("Editor is ready to use!",editor);
+                    }
                   }
-                }
-                onChange={(event, editor) => {
-                  const data = editor.getData();
-                  setArticleContent(data);
-                }}
-                
+                  onChange={(event, editor) => {
+                    const data = editor.getData();
+                    setArticleContent(data);
+                  }}
                 />
                 
                 :
@@ -233,8 +238,14 @@ const CreatePost = () => {
                     hidden
                     accept='video/*'
                     onChange={(e) => {
-                      setFileContentPreview(URL.createObjectURL(e.target.files[0]));
-                      setMediaContent(e.target.files[0])
+                      if (e.target.files.length > 0) {
+                        setFileContentPreview(URL.createObjectURL(e.target.files[0]));
+                        setMediaContent(e.target.files[0])
+                      }
+                      else {
+                        setFileContentPreview(null);
+                        setMediaContent(null);
+                      }
                     }}
                   />
                 </Button>
@@ -253,8 +264,14 @@ const CreatePost = () => {
                     hidden
                     accept='audio/*'
                     onChange={(e) => {
-                      setFileContentPreview(URL.createObjectURL(e.target.files[0]));
-                      setMediaContent(e.target.files[0])
+                      if (e.target.files.length > 0) {
+                        setFileContentPreview(URL.createObjectURL(e.target.files[0]));
+                        setMediaContent(e.target.files[0])
+                      }
+                      else {
+                        setFileContentPreview(null);
+                        setMediaContent(null);
+                      }
                     }}
                   />
                 </Button>

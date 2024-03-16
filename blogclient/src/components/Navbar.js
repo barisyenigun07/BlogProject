@@ -157,7 +157,8 @@ const Navbar = () => {
               color='warning'
               variant='contained'
               sx={{
-                height: "45px"
+                height: "45px",
+                marginTop: "5px"
               }}
             >
               <Link to={"/post/create"} style={{textDecoration: "none", color: "white"}}>Yayınla</Link>
@@ -189,9 +190,9 @@ const Navbar = () => {
               >
                 <MenuItem key={"profile"} onClick={(e) => {
                   handleCloseUserMenu();
-                  navigate(`/user/${authUser?.id}`)
+                  window.location.reload();
                 }}>
-                  <Typography>Profil</Typography>
+                  <Typography><Link style={{textDecoration: "none", color: "black"}} to={`/user/${authUser?.id}`}>Profil</Link></Typography>
                 </MenuItem>
                 <MenuItem key={"logout"} onClick={(e) => {
                   handleCloseUserMenu();

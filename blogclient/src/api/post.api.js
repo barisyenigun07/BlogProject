@@ -20,6 +20,12 @@ export const getPosts = async () => {
                         .catch(err => {throw err});
 }
 
+export const getPostsByUser = async (userId) => {
+    return await axios.get(`/post/user/${userId}`)
+                      .then(res => res.data)
+                      .catch(err => {throw err});
+}
+
 export const updatePost = async (id, formData) => {
      await axios.put(`/post/${id}`, formData, {headers: {Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data"}})
         .then(res => res.status)

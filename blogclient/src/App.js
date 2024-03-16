@@ -7,6 +7,7 @@ import PostDetail from './pages/PostDetail';
 import CreatePost from './pages/CreatePost';
 import Navbar from './components/Navbar';
 import UserProfile from './pages/UserProfile';
+import UpdateProfile from './pages/UpdateProfile';
 
  
 function App() {
@@ -21,6 +22,7 @@ function App() {
         <Route path='/post/:id' element={<PostDetail/>}/>
         <Route path='/post/create' element={<CreatePost/>}/>
         <Route path='/user/:id' element={<UserProfile/>}/>
+        <Route path='/update-profile' element={<UpdateProfile/>}/>
       </Routes>
     </BrowserRouter>
   );

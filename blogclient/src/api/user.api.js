@@ -2,9 +2,6 @@ import axios from "axios";
 
 const token = localStorage.getItem("token") ? localStorage.getItem("token") : null;
 
-
-
-
 export const getUser = async (id) => {
     return await axios.get(`/user/${id}`)
                       .then(res => res.data)

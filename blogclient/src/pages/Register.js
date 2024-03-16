@@ -43,7 +43,6 @@ const Register = () => {
           }, 1000);
         })
         .catch(() => {
-
         })
       
     }
@@ -149,7 +148,7 @@ const Register = () => {
                         height: "45px"
                       }}
                     >
-                      {loading ? <CircularProgress/> : null}
+                      {loading ? <CircularProgress sx={{color: "white"}}/> : null}
                       Kayıt Ol
                     </Button>
                   </Stack>
