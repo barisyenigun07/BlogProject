@@ -8,7 +8,9 @@ import lombok.Setter;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Entity
@@ -27,7 +29,7 @@ public class Comment {
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
     @Column(name = "published_date")
-    private LocalDate publishedDate = LocalDate.now();
+    private ZonedDateTime publishedDate = ZonedDateTime.now(ZoneId.systemDefault());
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;

@@ -52,7 +52,7 @@ public class UserService {
 
     public byte[] getCaptionPhoto(Long id){
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
-        return fileUtil.downloadFile("user_caption_photos", user.getProfilePhotoLink());
+        return fileUtil.downloadFile("user_caption_photos", user.getCaptionPhotoLink());
     }
 
     public void updateUser(UpdateUserRequest body){

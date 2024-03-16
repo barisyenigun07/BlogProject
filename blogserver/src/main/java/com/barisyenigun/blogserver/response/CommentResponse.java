@@ -5,7 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 
-import java.time.LocalDate;
+
+import java.time.ZonedDateTime;
 
 @Data
 @ToString
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 public class CommentResponse {
     private Long id;
     private String content;
-    private LocalDate publishedDate;
+    private ZonedDateTime publishedDate;
     private UserResponse user;
     private Long parentCommentId;
 

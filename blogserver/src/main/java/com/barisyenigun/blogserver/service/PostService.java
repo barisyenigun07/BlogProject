@@ -12,10 +12,6 @@ import com.barisyenigun.blogserver.request.PostRequest;
 import com.barisyenigun.blogserver.response.PostResponse;
 import com.barisyenigun.blogserver.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -94,30 +90,23 @@ public class PostService {
         return fileUtil.downloadFile(post.getPostType().toLowerCase() + "s", post.getContent());
     }
 
-    public Page<PostResponse> getPostsByUserAndPostType(Long userId, String postType, int page, int size){
+    public List<PostResponse> getPostsByUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
-        Pageable pageable = PageRequest.of(page, size, Sort.by("publishedDate").descending());
-        Page<Post> postsByUserAndPostType = postRepository.findAllByUserAndPostType(user, postType, pageable);
-        return postsByUserAndPostType.map(PostResponse::fromEntity);
-    }
-
-    public Page<PostResponse> getPostsByUser(Long userId, int page, int size) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
-        Pageable pageable = PageRequest.of(page, size, Sort.by("publishedDate").descending());
-        return null;
+        List<Post> postsByUser = postRepository.findAllByUser(user);
+        return postsByUser.stream().map(PostResponse::fromEntity).collect(Collectors.toList());
     }
 
     public List<PostResponse> getPostsByTagName(String tagName) {
         List<Post> postsByTag = postRepository.findAll().stream().filter(post -> post.getTags().stream().anyMatch(tag -> tag.getTagName().equals(tagName))).toList();
-        return postsByTag.stream().map(PostResponse::fromEntity).collect(Collectors.toList());
+        return postsByTag.stream().map(PostResponse::fromEntity).sorted(Comparator.comparing(PostResponse::getPublishedDate)).collect(Collectors.toList());
     }
 
     public List<PostResponse> getPosts(){
         List<Post> posts = postRepository.findAll();
-        return posts.stream().map(PostResponse::fromEntity).collect(Collectors.toList());
+        return posts.stream().map(PostResponse::fromEntity).sorted(Comparator.comparing(PostResponse::getPublishedDate).reversed()).collect(Collectors.toList());
     }
 
-    public void updatePost(Long id, PostRequest postRequest){
+    public void updatePost(Long id, PostRequest body){
         User user = userService.getAuthenticatedUser().orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.POST));
 
@@ -125,32 +114,32 @@ public class PostService {
             throw new UnauthorizedException();
         }
 
-        post.setTitle(postRequest.getTitle());
-        post.setDescription(postRequest.getDescription());
+        post.setTitle(body.getTitle());
+        post.setDescription(body.getDescription());
 
-        if (postRequest.getCaptionPhoto() != null) {
+        if (body.getCaptionPhoto() != null) {
             if (post.getCaptionPhotoLink() != null) {
                 fileUtil.deleteFile("post_caption_photos", post.getCaptionPhotoLink());
             }
 
-            String captionPhotoUrl = fileUtil.uploadFile(postRequest.getCaptionPhoto(), "image/", "post_caption_photos");
+            String captionPhotoUrl = fileUtil.uploadFile(body.getCaptionPhoto(), "image/", "post_caption_photos");
             post.setCaptionPhotoLink(captionPhotoUrl);
         }
 
-        post.setTags(postRequest.getTags());
+        post.setTags(body.getTags());
 
         switch (post.getPostType()) {
             case "ARTICLE" -> {
-                post.setContent(postRequest.getArticleContent());
+                post.setContent(body.getArticleContent());
             }
             case "VIDEO" -> {
                 fileUtil.deleteFile("videos", post.getContent());
-                String videoUrl = fileUtil.uploadFile(postRequest.getMediaContent(), "video/", "videos");
+                String videoUrl = fileUtil.uploadFile(body.getMediaContent(), "video/", "videos");
                 post.setContent(videoUrl);
             }
             case "PODCAST" -> {
                 fileUtil.deleteFile("podcasts", post.getContent());
-                String podcastUrl = fileUtil.uploadFile(postRequest.getMediaContent(), "audio/", "podcasts");
+                String podcastUrl = fileUtil.uploadFile(body.getMediaContent(), "audio/", "podcasts");
                 post.setContent(podcastUrl);
             }
             default -> System.out.println("Illegal post type!");

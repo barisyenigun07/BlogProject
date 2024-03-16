@@ -51,11 +51,8 @@ public class PostController {
     }
 
     @GetMapping("/user/{userId}")
-    public Page<PostResponse> getPostsByUserAndPostType(@PathVariable Long userId,
-                                                        @RequestParam("post_type") String postType,
-                                                        @RequestParam("page") int page,
-                                                        @RequestParam("size") int size){
-        return postService.getPostsByUserAndPostType(userId, postType, page, size);
+    public List<PostResponse> getPostsByUser(@PathVariable Long userId) {
+        return postService.getPostsByUser(userId);
     }
 
     @GetMapping("/tag")
@@ -64,8 +61,8 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
-    public void updatePost(@PathVariable Long id, @ModelAttribute PostRequest postRequest){
-        postService.updatePost(id, postRequest);
+    public void updatePost(@PathVariable Long id, @ModelAttribute PostRequest body){
+        postService.updatePost(id, body);
     }
 
     @DeleteMapping("/{id}")

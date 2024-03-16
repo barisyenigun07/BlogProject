@@ -33,7 +33,7 @@ public class RateService {
         Rate rate = new Rate();
         rate.setRateLevel(body.getRateLevel());
         rate.setPost(post);
-        post.setUser(user);
+        rate.setUser(user);
         rateRepository.save(rate);
     }
 
