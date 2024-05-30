@@ -1,4 +1,4 @@
-package com.barisyenigun.blogserver.service;
+package com.barisyenigun.blogserver.util;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
@@ -13,12 +13,12 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class StorageService {
+public class StorageUtil {
     private final AmazonS3 s3;
 
 
     @Autowired
-    public StorageService(AmazonS3 s3){
+    public StorageUtil(AmazonS3 s3){
         this.s3 = s3;
     }
 

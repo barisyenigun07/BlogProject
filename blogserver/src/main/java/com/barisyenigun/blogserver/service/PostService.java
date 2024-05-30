@@ -10,7 +10,6 @@ import com.barisyenigun.blogserver.repository.PostRepository;
 import com.barisyenigun.blogserver.repository.UserRepository;
 import com.barisyenigun.blogserver.request.PostRequest;
 import com.barisyenigun.blogserver.response.PostResponse;
-import com.barisyenigun.blogserver.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,14 +24,14 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserService userService;
     private final UserRepository userRepository;
-    private final FileUtil fileUtil;
+    private final FileStorageService fileStorageService;
 
     @Autowired
-    public PostService(PostRepository postRepository, UserService userService, UserRepository userRepository, FileUtil fileUtil){
+    public PostService(PostRepository postRepository, UserService userService, UserRepository userRepository, FileStorageService fileStorageService){
         this.postRepository = postRepository;
         this.userService = userService;
         this.userRepository = userRepository;
-        this.fileUtil = fileUtil;
+        this.fileStorageService = fileStorageService;
     }
 
     public void createPost(PostRequest body) {
@@ -43,7 +42,7 @@ public class PostService {
         post.setDescription(body.getDescription());
 
         if (body.getCaptionPhoto() != null) {
-            String captionPhotoUrl = fileUtil.uploadFile(body.getCaptionPhoto(), "image/", "post_caption_photos");
+            String captionPhotoUrl = fileStorageService.uploadFile(body.getCaptionPhoto(), "image/", "post_caption_photos");
             post.setCaptionPhotoLink(captionPhotoUrl);
         }
 
@@ -52,27 +51,27 @@ public class PostService {
         post.setTags(body.getTags());
         post.setUser(user);
 
-
         switch (body.getPostType()) {
             case "ARTICLE" -> {
                 post.setContent(body.getArticleContent());
             }
             case "VIDEO" -> {
-                String videoUrl = fileUtil.uploadFile(body.getMediaContent(), "video/", "videos");
+                String videoUrl = fileStorageService.uploadFile(body.getMediaContent(), "video/", "videos");
                 post.setContent(videoUrl);
             }
             case "PODCAST" -> {
-                String podcastUrl = fileUtil.uploadFile(body.getMediaContent(), "audio/", "podcasts");
+                String podcastUrl = fileStorageService.uploadFile(body.getMediaContent(), "audio/", "podcasts");
                 post.setContent(podcastUrl);
             }
             default -> System.out.println("Illegal post type!");
         }
 
+
         postRepository.save(post);
     }
 
     public void uploadArticleImage(MultipartFile file) {
-        fileUtil.uploadFile(file, "image/", "article_images");
+        fileStorageService.uploadFile(file, "image/", "article_images");
     }
 
     public PostResponse getPost(Long id){
@@ -82,12 +81,12 @@ public class PostService {
 
     public byte[] getCaptionPhoto(Long id){
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.POST));
-        return fileUtil.downloadFile("post_caption_photos", post.getCaptionPhotoLink());
+        return fileStorageService.downloadFile("post_caption_photos", post.getCaptionPhotoLink());
     }
 
     public byte[] getFileContent(Long id){
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.POST));
-        return fileUtil.downloadFile(post.getPostType().toLowerCase() + "s", post.getContent());
+        return fileStorageService.downloadFile(post.getPostType().toLowerCase() + "s", post.getContent());
     }
 
     public List<PostResponse> getPostsByUser(Long userId) {
@@ -119,10 +118,10 @@ public class PostService {
 
         if (body.getCaptionPhoto() != null) {
             if (post.getCaptionPhotoLink() != null) {
-                fileUtil.deleteFile("post_caption_photos", post.getCaptionPhotoLink());
+                fileStorageService.deleteFile("post_caption_photos", post.getCaptionPhotoLink());
             }
 
-            String captionPhotoUrl = fileUtil.uploadFile(body.getCaptionPhoto(), "image/", "post_caption_photos");
+            String captionPhotoUrl = fileStorageService.uploadFile(body.getCaptionPhoto(), "image/", "post_caption_photos");
             post.setCaptionPhotoLink(captionPhotoUrl);
         }
 
@@ -133,13 +132,13 @@ public class PostService {
                 post.setContent(body.getArticleContent());
             }
             case "VIDEO" -> {
-                fileUtil.deleteFile("videos", post.getContent());
-                String videoUrl = fileUtil.uploadFile(body.getMediaContent(), "video/", "videos");
+                fileStorageService.deleteFile("videos", post.getContent());
+                String videoUrl = fileStorageService.uploadFile(body.getMediaContent(), "video/", "videos");
                 post.setContent(videoUrl);
             }
             case "PODCAST" -> {
-                fileUtil.deleteFile("podcasts", post.getContent());
-                String podcastUrl = fileUtil.uploadFile(body.getMediaContent(), "audio/", "podcasts");
+                fileStorageService.deleteFile("podcasts", post.getContent());
+                String podcastUrl = fileStorageService.uploadFile(body.getMediaContent(), "audio/", "podcasts");
                 post.setContent(podcastUrl);
             }
             default -> System.out.println("Illegal post type!");
@@ -156,11 +155,11 @@ public class PostService {
         }
 
         if (post.getCaptionPhotoLink() != null) {
-            fileUtil.deleteFile("post_caption_photos", post.getCaptionPhotoLink());
+            fileStorageService.deleteFile("post_caption_photos", post.getCaptionPhotoLink());
         }
 
         if (post.getPostType().equals("VIDEO") || post.getPostType().equals("PODCAST")) {
-            fileUtil.deleteFile((post.getPostType().toLowerCase() + "s"), post.getContent());
+            fileStorageService.deleteFile((post.getPostType().toLowerCase() + "s"), post.getContent());
         }
         postRepository.deleteById(id);
     }

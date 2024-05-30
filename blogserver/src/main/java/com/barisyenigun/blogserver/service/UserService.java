@@ -6,7 +6,6 @@ import com.barisyenigun.blogserver.exception.ResourceType;
 import com.barisyenigun.blogserver.repository.UserRepository;
 import com.barisyenigun.blogserver.request.UpdateUserRequest;
 import com.barisyenigun.blogserver.response.UserResponse;
-import com.barisyenigun.blogserver.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,11 +19,11 @@ import java.util.*;
 @Transactional
 public class UserService {
     private final UserRepository userRepository;
-    private final FileUtil fileUtil;
+    private final FileStorageService fileStorageService;
     @Autowired
-    public UserService(UserRepository userRepository, FileUtil fileUtil){
+    public UserService(UserRepository userRepository, FileStorageService fileStorageService){
         this.userRepository = userRepository;
-        this.fileUtil = fileUtil;
+        this.fileStorageService = fileStorageService;
     }
 
     public Optional<User> getAuthenticatedUser(){
@@ -47,12 +46,12 @@ public class UserService {
     }
     public byte[] getProfilePhoto(Long id){
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
-        return fileUtil.downloadFile("user_profile_photos", user.getProfilePhotoLink());
+        return fileStorageService.downloadFile("user_profile_photos", user.getProfilePhotoLink());
     }
 
     public byte[] getCaptionPhoto(Long id){
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResourceType.USER));
-        return fileUtil.downloadFile("user_caption_photos", user.getCaptionPhotoLink());
+        return fileStorageService.downloadFile("user_caption_photos", user.getCaptionPhotoLink());
     }
 
     public void updateUser(UpdateUserRequest body){
@@ -63,19 +62,19 @@ public class UserService {
 
         if (body.getCaptionPhoto() != null) {
             if (user.getCaptionPhotoLink() != null) {
-                fileUtil.deleteFile("user_caption_photos", user.getCaptionPhotoLink());
+                fileStorageService.deleteFile("user_caption_photos", user.getCaptionPhotoLink());
             }
 
-            String captionPhotoLink = fileUtil.uploadFile(body.getCaptionPhoto(), "image/", "user_caption_photos");
+            String captionPhotoLink = fileStorageService.uploadFile(body.getCaptionPhoto(), "image/", "user_caption_photos");
             user.setCaptionPhotoLink(captionPhotoLink);
         }
 
         if (body.getProfilePhoto() != null) {
             if (user.getProfilePhotoLink() != null) {
-                fileUtil.deleteFile("user_profile_photos", user.getProfilePhotoLink());
+                fileStorageService.deleteFile("user_profile_photos", user.getProfilePhotoLink());
             }
 
-            String profilePhotoLink = fileUtil.uploadFile(body.getProfilePhoto(), "image/", "user_profile_photos");
+            String profilePhotoLink = fileStorageService.uploadFile(body.getProfilePhoto(), "image/", "user_profile_photos");
             user.setProfilePhotoLink(profilePhotoLink);
         }
 

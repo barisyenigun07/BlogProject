@@ -30,7 +30,7 @@ public class AuthController {
         return authService.login(body);
     }
 
-    @PutMapping("/change_password")
+    @PutMapping("/change-password")
     public void changePassword(@RequestBody ChangePasswordRequest body){
         authService.changePassword(userService.getAuthenticatedUserId(), body);
     }

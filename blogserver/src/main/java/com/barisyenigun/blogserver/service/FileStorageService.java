@@ -1,9 +1,9 @@
-package com.barisyenigun.blogserver.util;
+package com.barisyenigun.blogserver.service;
 
 
 import com.barisyenigun.blogserver.bucket.BucketName;
 import com.barisyenigun.blogserver.exception.FileException;
-import com.barisyenigun.blogserver.service.StorageService;
+import com.barisyenigun.blogserver.util.StorageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,13 +15,13 @@ import java.text.Normalizer;
 import java.util.*;
 
 @Service
-public class FileUtil {
+public class FileStorageService {
 
-    private final StorageService storageService;
+    private final StorageUtil storageUtil;
 
     @Autowired
-    public FileUtil(StorageService storageService){
-        this.storageService = storageService;
+    public FileStorageService(StorageUtil storageUtil){
+        this.storageUtil = storageUtil;
     }
 
     private Map<String, String> extractMetadata(MultipartFile file) {
@@ -57,7 +57,7 @@ public class FileUtil {
         String filename = String.format("%s-%s", UUID.randomUUID(), normalizeFilename(file.getOriginalFilename()));
 
         try {
-            storageService.upload(path, filename, Optional.of(metadata), file.getInputStream());
+            storageUtil.upload(path, filename, Optional.of(metadata), file.getInputStream());
             return filename;
         }
         catch (IOException e){
@@ -66,10 +66,10 @@ public class FileUtil {
     }
 
     public byte[] downloadFile(String destination, String filename){
-        return storageService.download(String.format("%s/%s", BucketName.STORAGE_BUCKET.getBucketName(), destination), filename);
+        return storageUtil.download(String.format("%s/%s", BucketName.STORAGE_BUCKET.getBucketName(), destination), filename);
     }
 
     public void deleteFile(String destination, String filename){
-        storageService.delete(BucketName.STORAGE_BUCKET.getBucketName(), String.format("%s/%s", destination, filename));
+        storageUtil.delete(BucketName.STORAGE_BUCKET.getBucketName(), String.format("%s/%s", destination, filename));
     }
 }
