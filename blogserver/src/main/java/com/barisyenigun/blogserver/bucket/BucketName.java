@@ -1,7 +1,7 @@
 package com.barisyenigun.blogserver.bucket;
 
 public enum BucketName {
-    STORAGE_BUCKET("blog-application-storage-bucket");
+    STORAGE_BUCKET("blogapp-storage-bucket");
 
     private final String bucketName;
 

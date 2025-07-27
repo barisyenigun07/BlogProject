@@ -68,7 +68,6 @@ public class PostService {
             default -> System.out.println("Illegal post type!");
         }
 
-
         postRepository.save(post);
     }
 
